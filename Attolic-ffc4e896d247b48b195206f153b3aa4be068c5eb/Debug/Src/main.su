@@ -1,0 +1,11 @@
+main.c:236:6:SystemClock_Config	88	static
+main.c:547:6:triangle_wave	88	static
+main.c:587:6:const_vel	72	static
+main.c:603:6:sin_wave	56	static
+main.c:618:6:homing	0	static
+main.c:623:10:char2uint	0	static
+main.c:641:6:respuesta	24	static
+main.c:668:6:printPasos	40	static
+main.c:701:6:Polling_UART	104	static
+main.c:125:5:main	120	static
+main.c:775:6:Error_Handler	0	static

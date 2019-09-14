@@ -237,19 +237,6 @@ void EXTI0_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles EXTI line4 interrupt.
-  */
-void EXTI4_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI4_IRQn 0 */
-  /* USER CODE END EXTI4_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
-  /* USER CODE BEGIN EXTI4_IRQn 1 */
-
-  /* USER CODE END EXTI4_IRQn 1 */
-}
-
-/**
   * @brief This function handles EXTI line[9:5] interrupts.
   */
 void EXTI9_5_IRQHandler(void)
@@ -263,7 +250,9 @@ void EXTI9_5_IRQHandler(void)
   posActual=0;
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
   HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
+  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC1  ;", 9, 200);
   }
+
   /* USER CODE END EXTI9_5_IRQn 1 */
 }
 
@@ -295,7 +284,7 @@ void TIM3_IRQHandler(void)
 	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	TIM4->ARR=abs(velocidades[actualVel]);
 	__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,((abs(velocidades[actualVel]))/2));
-
+	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
 	}
 
   /* USER CODE END TIM3_IRQn 0 */
@@ -396,7 +385,9 @@ void EXTI15_10_IRQHandler(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
   estado=1;
   HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
+  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
   }
+
   /* USER CODE END EXTI15_10_IRQn 1 */
 }
 

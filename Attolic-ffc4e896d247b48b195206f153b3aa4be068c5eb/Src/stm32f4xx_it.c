@@ -76,7 +76,7 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
-extern int velocidades[100];
+extern int velocidades[10000];
 char buf[16];
 extern int posActual;
 extern int posCentral;
@@ -267,7 +267,7 @@ void TIM3_IRQHandler(void)
 	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	if(estado==3){
 	int static actualVel=0;
-	if (actualVel>99){
+	if (actualVel>9999){
 		actualVel=0;
 	}
 	else{

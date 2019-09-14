@@ -107,7 +107,7 @@ int estado=0;
 int posActual=0;
 int posMax=0;
 int posCentral=0;
-volatile int velocidades[100];
+volatile int velocidades[10000];
 // variables para comunicacion UART2
 uint8_t rx_index_UART2;
 _Bool OK_UART2;
@@ -167,7 +167,7 @@ int main(void)
   int counter=0;
   int position=0;
   int maxposition;
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
   TIM4->ARR=2000;       //desborde de tiempo de pwm en timer 4.
   __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,1000); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
@@ -326,7 +326,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 16000;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 100;
+  htim3.Init.Period = 10;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
@@ -571,7 +571,7 @@ void triangle_wave(int freq, int min,int max){
 		HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 		velocidades[0]=min;
 
-		for (int i=1;i<100;i++){
+		for (int i=1;i<10000;i++){
 		if ((i+4) % period ==0)
 		{
 			delta=-delta;
@@ -587,11 +587,12 @@ void triangle_wave(int freq, int min,int max){
 
 void const_vel(int vel,int freq){
 	char info[50];
-	int period=100/freq;
-	sprintf(info, "Constante,vel:%d ,freq: %d\n",vel, freq);
+
+	int period=10000/(100*freq);
+	sprintf(info, "Constante,vel:%d ,periodo: %d\n",vel, freq);
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	int sign=1;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<10000;i++){
 		if((i%period)==0){
 			sign=-sign;
 			}
@@ -606,7 +607,7 @@ void sin_wave(int freq,int min, int max){
 	//const float CICLE=(3.14*2)/110;
 	float amp=max-min;
 	int sign=1;
-	for (int i=0;i<100;i++){
+	for (int i=0;i<10000;i++){
 		velocidades[i]=(int)((sin(i*2*M_PI*0.01*freq)*amp*sign)+min);
 		if (velocidades[i]==max){
 			 sign=-sign;

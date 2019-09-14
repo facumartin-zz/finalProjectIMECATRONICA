@@ -170,7 +170,12 @@ int main(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
   TIM4->ARR=2000;       //desborde de tiempo de pwm en timer 4.
-  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,1000); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_4,1000); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+
+
+  //forzado
+  estado=2;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -326,7 +331,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 16000;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 10;
+  htim3.Init.Period = 9;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
@@ -588,7 +593,8 @@ void triangle_wave(int freq, int min,int max){
 void const_vel(int vel,int freq){
 	char info[50];
 
-	int period=10000/(100*freq);
+	//double period=10000/(100*freq);
+	int period=10000/(100);
 	sprintf(info, "Constante,vel:%d ,periodo: %d\n",vel, freq);
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	int sign=1;

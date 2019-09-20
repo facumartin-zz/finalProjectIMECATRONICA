@@ -94,7 +94,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_I2C2_Init(void);
 /* USER CODE BEGIN PFP */
 void triangle_wave(int freq, int min, int max);
-void sin_wave(int freq,int amp, int middle_value);
+void sin_wave(int vel, int freq);
 void const_vel(int vel,int freq);
 void Polling_UART();
 void homing(int freq);
@@ -182,6 +182,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  sin_wave(6000,1);
 		char info[50];
 		sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
@@ -608,16 +609,32 @@ void const_vel(int vel,int freq){
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 }
 
-void sin_wave(int freq,int min, int max){
+void sin_wave(int vel,int freq){
 	//y = 3 * sin((float)x / 10); oscilating between 3 and -3 period 20pi.
 	//const float CICLE=(3.14*2)/110;
-	float amp=max-min;
+	char info[50];
+	int period=10000/(100*freq)/2;  //porque tiene que cambiar al cuarto
+	int phi=11;
+	sprintf(info, "senoidal,vel:%d ,periodo: %d\n",vel, freq);
+	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	int sign=1;
 	for (int i=0;i<10000;i++){
-		velocidades[i]=(int)((sin(i*2*M_PI*0.01*freq)*amp*sign)+min);
-		if (velocidades[i]==max){
-			 sign=-sign;
+		velocidades[i]=(int)(sin((i*2*M_PI/period)+phi)*vel);
+		//if(((i+period/2)%period)==0){
+		/*if(((i)%(period/2))==0){
+					sign=-sign;
+					}
+					*/
+		//velocidades[i]=(int)(65535*sign+vel-((sin(i*2*M_PI/period+(0.25*M_PI/period)))*vel))*sign;
+		//velocidades[i]=(int)((65535*sign)+((sin(i*2*M_PI/period)*vel)));
+		if(velocidades[i]<0){
+			velocidades[i]=velocidades[i]+65535;
 		}
+		else{
+			velocidades[i]=velocidades[i]-65535;
+			}
+
+		//velocidades[i]=(int)sin(i)*1000;
 	}
 	estado=3;
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
@@ -727,12 +744,12 @@ void Polling_UART() {
 						HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 					}
 			else if(rx_data_UART[1]=='s'){
-						freq=((int)(rx_data_UART[2]-'0'))*100+((int)(rx_data_UART[3]-'0'))*10+(int)(rx_data_UART[4]-'0');
-						min=((int)(rx_data_UART[5]-'0'))*100+((int)(rx_data_UART[6]-'0'))*10+(int)(rx_data_UART[7]-'0');
+				vel=((int)(rx_data_UART[2]-'0'))*10000+((int)(rx_data_UART[3]-'0'))*1000+((int)(rx_data_UART[4]-'0'))*100+((int)(rx_data_UART[5]-'0'))*10+((int)(rx_data_UART[6]-'0'));
+													freq=((int)(rx_data_UART[7]-'0'))*100+((int)(rx_data_UART[8]-'0'))*10+((int)(rx_data_UART[9]-'0'));
 						max=((int)(rx_data_UART[8]-'0'))*100+((int)(rx_data_UART[9]-'0'))*10+(int)(rx_data_UART[10]-'0');
 						char info[50];
-						sprintf(info, "Senoidal, freq: %d, min: %d, max: %d \n",freq, min, max);
-						sin_wave(freq,min,max);
+						sprintf(info, "Senoidal,vel:%d ,freq: %d\n",vel, freq);
+						sin_wave(vel,freq);
 						HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 					}
 			else if(rx_data_UART[1]=='c'){

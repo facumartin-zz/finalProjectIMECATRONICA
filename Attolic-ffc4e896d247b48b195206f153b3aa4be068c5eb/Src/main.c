@@ -598,7 +598,7 @@ void sin_wave(int vel,int freq){
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	int sign=1;
 	for (int i=0;i<10000;i++){
-		velocidades[i]=(int)(sin((i*2*M_PI/period)+phi)*vel);
+		velocidades[i]=(int)((1/sin((i*2*M_PI/period)+phi))*vel);
 		//if(((i+period/2)%period)==0){
 		/*if(((i)%(period/2))==0){
 					sign=-sign;

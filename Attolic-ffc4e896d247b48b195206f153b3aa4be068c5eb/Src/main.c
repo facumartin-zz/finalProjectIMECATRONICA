@@ -177,7 +177,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  sin_wave(6000,1);
+	 //	 sin_wave(6000,1);
 		char info[50];
 		sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);

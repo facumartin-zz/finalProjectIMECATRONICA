@@ -7724,7 +7724,7 @@ void Polling_UART() {
   TIM4->ARR=100;       //desborde de tiempo de pwm en timer 4.
  8003768:	2364      	movs	r3, #100	; 0x64
  800376a:	f8c9 302c 	str.w	r3, [r9, #44]	; 0x2c
-  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,50); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,50); //match de comparaciï¿½n en timer 4, siempre tiene que ser la mitad de ARR.
  800376e:	682b      	ldr	r3, [r5, #0]
  8003770:	2232      	movs	r2, #50	; 0x32
  8003772:	635a      	str	r2, [r3, #52]	; 0x34
@@ -8438,7 +8438,19 @@ void TIM3_IRQHandler(void)
  8003b2c:	4810      	ldr	r0, [pc, #64]	; (8003b70 <TIM3_IRQHandler+0x7c>)
  8003b2e:	f7fd fb5e 	bl	80011ee <HAL_GPIO_TogglePin>
 	//sprintf(info, "velAct: %d\n",velocidades[actualVel]);
-	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
+	sprintf(info, "velAct: %d\n",actualVel);
+ 8003b60:	6822      	ldr	r2, [r4, #0]
+ 8003b62:	491a      	ldr	r1, [pc, #104]	; (8003bcc <TIM3_IRQHandler+0xac>)
+ 8003b64:	a801      	add	r0, sp, #4
+ 8003b66:	f000 f949 	bl	8003dfc <siprintf>
+	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
+ 8003b6a:	a801      	add	r0, sp, #4
+ 8003b6c:	f7fc fb30 	bl	80001d0 <strlen>
+ 8003b70:	23c8      	movs	r3, #200	; 0xc8
+ 8003b72:	b282      	uxth	r2, r0
+ 8003b74:	a901      	add	r1, sp, #4
+ 8003b76:	4816      	ldr	r0, [pc, #88]	; (8003bd0 <TIM3_IRQHandler+0xb0>)
+ 8003b78:	f7ff f884 	bl	8002c84 <HAL_UART_Transmit>
 	TIM4->ARR=abs(velocidades[actualVel]);
  8003b32:	6823      	ldr	r3, [r4, #0]
  8003b34:	4a0f      	ldr	r2, [pc, #60]	; (8003b74 <TIM3_IRQHandler+0x80>)

@@ -170,17 +170,18 @@ int main(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
   TIM4->ARR=100;       //desborde de tiempo de pwm en timer 4.
-  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,50); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,50); //match de comparaciï¿½n en timer 4, siempre tiene que ser la mitad de ARR.
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  sin_wave(6000,1);
 		char info[50];
 		sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
-		//estado=2; para debug comunicación-desarrollo. Saltea homming y fines de carrera.
+		//estado=2; para debug comunicaciï¿½n-desarrollo. Saltea homming y fines de carrera.
 	  if ((estado==2||estado==3)){
 		  Polling_UART();
 
@@ -692,8 +693,8 @@ void printPasos(UART_HandleTypeDef huart) {
 	char bufferTX[20];
 	int x[4];
 	for (int i = 0; i < 4; i++) {
-		x[i] = (int) fabsl(12345 / 3); // estos números serían variables
-		x[i] = x[i] > 9999 ? 9999 : x[i]; // cómo máximo envío el 9999 por cada motor
+		x[i] = (int) fabsl(12345 / 3); // estos nï¿½meros serï¿½an variables
+		x[i] = x[i] > 9999 ? 9999 : x[i]; // cï¿½mo mï¿½ximo envï¿½o el 9999 por cada motor
 	}
 	sprintf(bufferTX, ":%04d%04d%04d%04d;\r\n", x[0], x[1], x[2], x[3]);
 	HAL_UART_Transmit(&huart, (uint8_t*) bufferTX, 20, HAL_MAX_DELAY); // transmite por UART

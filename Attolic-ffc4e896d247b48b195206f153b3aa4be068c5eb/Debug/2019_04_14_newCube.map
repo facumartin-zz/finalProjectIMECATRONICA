@@ -2015,7 +2015,7 @@ OUTPUT(2019_04_14_newCube.elf elf32-littlearm)
  .debug_str     0x0000445d       0x25 Src\stm32f4xx_hal_msp.o
                                0x1620 (size before relaxing)
  .debug_str     0x00004482      0x141 Src\stm32f4xx_it.o
-                               0x114f (size before relaxing)
+                               0x115e (size before relaxing)
  .debug_str     0x000045c3       0x45 Src\system_stm32f4xx.o
                                 0x818 (size before relaxing)
 

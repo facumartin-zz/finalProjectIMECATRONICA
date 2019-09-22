@@ -319,7 +319,7 @@ void TIM4_IRQHandler(void)
 		//HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
 		}
 	}
-
+	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
   /* USER CODE END TIM4_IRQn 0 */
   HAL_TIM_IRQHandler(&htim4);
   /* USER CODE BEGIN TIM4_IRQn 1 */

@@ -94,7 +94,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_I2C2_Init(void);
 /* USER CODE BEGIN PFP */
 void triangle_wave(int freq, int min, int max);
-void sin_wave(int vel,int freq);
+void sin_wave(int A,int F);
 void const_vel(int vel,int freq);
 void Polling_UART();
 void homing(int freq);
@@ -103,11 +103,21 @@ void homing(int freq);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 double const clock=16000000;
+double const htim3_Prescaler = 16000;
+int const htim3_Period = 9;
+double const htim4_Prescaler = 2;
+int const htim4_Period = 200;
+int const pulsosporRevolucion=8000;
+int const mmporRevolucion=10;
+
 int estado=0;
 int posActual=0;
 int posMax=0;
 int posCentral=0;
 volatile int velocidades[10000];
+volatile int velocidadesPulsos[10000];
+volatile int posiciones[10000];
+volatile int periodos[1000];
 // variables para comunicacion UART2
 uint8_t rx_index_UART2;
 _Bool OK_UART2;
@@ -173,7 +183,7 @@ int main(void)
   __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,1000); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
 
   estado=2; //forzado
-  sin_wave(65000,1);
+  sin_wave(100,1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -327,9 +337,9 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 16000;
+  htim3.Init.Prescaler = htim3_Prescaler;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 9;
+  htim3.Init.Period = htim3_Period;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
@@ -590,17 +600,22 @@ void triangle_wave(int freq, int min,int max){
 
 
 
-void sin_wave(int vel,int freq){
+void sin_wave(int A,int F){
 	//y = 3 * sin((float)x / 10); oscilating between 3 and -3 period 20pi.
 	//const float CICLE=(3.14*2)/110;
 	char info[50];
-	int period=10000/(100*freq)/2;  //porque tiene que cambiar al cuarto
+	double deltaT=(htim3_Prescaler*(htim3_Period+1))/clock;  //porque tiene que cambiar al cuarto
+	//float period=0.01;
+
 	int phi=11;
-	sprintf(info, "senoidal,vel:%d ,periodo: %d\n",vel, freq);
+	sprintf(info, "senoidal,Amplitud:%d ,Frecuencia: %d\n",A,F);
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	int sign=1;
 	for (int i=0;i<10000;i++){
-		velocidades[i]=(int)(sin((i*2*M_PI/period)+phi)*vel);
+		velocidades[i]=(int)(A*2*M_PI*F*cos((2*M_PI*F*i*deltaT)));
+		posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
+		velocidadesPulsos[i]=(int)(velocidades[i]*pulsosporRevolucion/mmporRevolucion);
+		//periodos[i]=(int)(1/(velocidadesPulsos[i]*htim4_Prescaler/clock));
 		//if(((i+period/2)%period)==0){
 		/*if(((i)%(period/2))==0){
 					sign=-sign;
@@ -608,15 +623,20 @@ void sin_wave(int vel,int freq){
 					*/
 		//velocidades[i]=(int)(65535*sign+vel-((sin(i*2*M_PI/period+(0.25*M_PI/period)))*vel))*sign;
 		//velocidades[i]=(int)((65535*sign)+((sin(i*2*M_PI/period)*vel)));
-		if(velocidades[i]<0){
+		/*if(velocidades[i]<0){
 			velocidades[i]=velocidades[i]+65535;
 		}
 		else{
 			velocidades[i]=velocidades[i]-65535;
 			}
-
+*/
 		//velocidades[i]=(int)sin(i)*1000;
 	}
+	for (int i=0;i<1000;i++){
+		periodos[i]=(int)(1/(velocidadesPulsos[i]*htim4_Prescaler/clock));
+		}
+
+
 	estado=3;
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 }

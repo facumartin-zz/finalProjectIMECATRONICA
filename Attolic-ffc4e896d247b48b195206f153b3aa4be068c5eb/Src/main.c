@@ -95,7 +95,7 @@ static void MX_I2C2_Init(void);
 /* USER CODE BEGIN PFP */
 void triangle_wave(int freq, int min, int max);
 void sin_wave(int A,int F);
-void const_vel(int vel,int freq);
+void const_vel(int A,int F);
 void Polling_UART();
 void homing(int freq);
 /* USER CODE END PFP */
@@ -183,7 +183,8 @@ int main(void)
   __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,1000); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
 
   estado=2; //forzado
-  sin_wave(100,1);
+  //sin_wave(100,1);
+  const_vel(100,1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -642,19 +643,19 @@ void sin_wave(int A,int F){
 }
 
 
-void const_vel(int vel,int freq){
+void const_vel(int A,int F){
 	char info[50];
-
+	int moduloVelocidad=(int)(1/((A*F/2*pulsosporRevolucion/mmporRevolucion)*htim4_Prescaler/clock));
 	//double period=10000/(100*freq);
-	int period=10000/(100);
-	sprintf(info, "Constante,vel:%d ,periodo: %d\n",vel, freq);
+	int period=10000/(100*(F*2));
+	sprintf(info, "Constante,vel:%d ,periodo: %d\n",A,F);
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	int sign=1;
-	for (int i=0;i<10000;i++){
+	for (int i=0;i<1000;i++){
 		if((i%period)==0){
 			sign=-sign;
 			}
-		velocidades[i]=vel*sign;
+		periodos[i]=moduloVelocidad*sign;
 }
 	estado=3;
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
@@ -749,8 +750,8 @@ void procesarUart(UART_HandleTypeDef huart,   uint8_t *rx_data, uint8_t rx_index
 
 // Lectura de la uart
 void Polling_UART() {
-	int freq;
-	int min;
+	int Frecuencia;
+	int Amplitud;
 	int max;
 	int vel;
 	uint8_t rx_data_UART[13];
@@ -760,32 +761,35 @@ void Polling_UART() {
 			HAL_UART_Transmit(&huart2, (uint8_t*) rx_data_UART, 13, HAL_MAX_DELAY);
 
 			if (rx_data_UART[1]=='t'){ // En este switch solo observo el segundo byte
-						freq=((int)(rx_data_UART[2]-'0'))*100+((int)(rx_data_UART[3]-'0'))*10+(int)(rx_data_UART[4]-'0');
-						min=((int)(rx_data_UART[5]-'0'))*100+((int)(rx_data_UART[6]-'0'))*10+(int)(rx_data_UART[7]-'0');
-						max=((int)(rx_data_UART[8]-'0'))*100+((int)(rx_data_UART[9]-'0'))*10+(int)(rx_data_UART[10]-'0');
+						/*Frecuencia=((int)(rx_data_UART[2]-'0'))*100+((int)(rx_data_UART[3]-'0'))*10+(int)(rx_data_UART[4]-'0');
+						Amplitud=((int)(rx_data_UART[5]-'0'))*100+((int)(rx_data_UART[6]-'0'))*10+(int)(rx_data_UART[7]-'0');
+						Amplitud=((int)(rx_data_UART[8]-'0'))*100+((int)(rx_data_UART[9]-'0'))*10+(int)(rx_data_UART[10]-'0');
 						char info[50];
 						sprintf(info, "Triangular, freq: %d, min: %d, max: %d \n",freq, min, max);
 						triangle_wave(freq,min,max);
-						HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
+						HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);*/
 					}
 			else if(rx_data_UART[1]=='s'){
-						vel=((int)(rx_data_UART[2]-'0'))*10000+((int)(rx_data_UART[3]-'0'))*1000+((int)(rx_data_UART[4]-'0'))*100+((int)(rx_data_UART[5]-'0'))*10+((int)(rx_data_UART[6]-'0'));
-						freq=((int)(rx_data_UART[7]-'0'))*100+((int)(rx_data_UART[8]-'0'))*10+((int)(rx_data_UART[9]-'0'));
+						Amplitud=((int)(rx_data_UART[2]-'0'))*10000+((int)(rx_data_UART[3]-'0'))*1000+((int)(rx_data_UART[4]-'0'))*100+((int)(rx_data_UART[5]-'0'))*10+((int)(rx_data_UART[6]-'0'));
+						Frecuencia=((int)(rx_data_UART[7]-'0'))*100+((int)(rx_data_UART[8]-'0'))*10+((int)(rx_data_UART[9]-'0'));
 						//max=((int)(rx_data_UART[8]-'0'))*100+((int)(rx_data_UART[9]-'0'))*10+(int)(rx_data_UART[10]-'0');
 						//char info[50];
 						//sprintf(info, "Senoidal,vel:%d ,freq: %d\n",vel, freq);
-						sin_wave(vel,freq);
+						sin_wave(Amplitud,Frecuencia);
 						//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 					}
 			else if(rx_data_UART[1]=='c'){
-									vel=((int)(rx_data_UART[2]-'0'))*10000+((int)(rx_data_UART[3]-'0'))*1000+((int)(rx_data_UART[4]-'0'))*100+((int)(rx_data_UART[5]-'0'))*10+((int)(rx_data_UART[6]-'0'));
-									freq=((int)(rx_data_UART[7]-'0'))*100+((int)(rx_data_UART[8]-'0'))*10+((int)(rx_data_UART[9]-'0'));
+									Amplitud=((int)(rx_data_UART[2]-'0'))*10000+((int)(rx_data_UART[3]-'0'))*1000+((int)(rx_data_UART[4]-'0'))*100+((int)(rx_data_UART[5]-'0'))*10+((int)(rx_data_UART[6]-'0'));
+									Frecuencia=((int)(rx_data_UART[7]-'0'))*100+((int)(rx_data_UART[8]-'0'))*10+((int)(rx_data_UART[9]-'0'));
 									char info[50];
-									sprintf(info, "Constante,vel:%d ,freq: %d\n",vel, freq);
-									const_vel(vel,freq);
+									sprintf(info, "Constante,vel:%d ,freq: %d\n",Amplitud, Frecuencia);
+									const_vel(Amplitud,Frecuencia);
 
 									HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 								}
+			else if(rx_data_UART[1]=='h'){
+									estado=0;
+											}
 			else if(rx_data_UART[1]=='v'){
 				HAL_UART_Transmit(&huart2, "Velocity: ", 10, 200);
 					for(int i=0;i<100;i++){

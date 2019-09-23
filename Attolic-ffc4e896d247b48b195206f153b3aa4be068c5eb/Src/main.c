@@ -90,7 +90,6 @@ void triangle_wave(int freq, int min, int max);
 void sin_wave(int A,int F);
 void const_vel(int A,int F);
 void Polling_UART();
-void homing(int freq);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

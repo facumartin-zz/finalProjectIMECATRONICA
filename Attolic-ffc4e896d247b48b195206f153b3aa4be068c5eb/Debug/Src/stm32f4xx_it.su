@@ -9,7 +9,7 @@ stm32f4xx_it.c:192:6:PendSV_Handler	0	static
 stm32f4xx_it.c:205:6:SysTick_Handler	0	static
 stm32f4xx_it.c:226:6:EXTI0_IRQHandler	8	static
 stm32f4xx_it.c:242:6:EXTI9_5_IRQHandler	8	static
-stm32f4xx_it.c:262:6:TIM3_IRQHandler	16	static
+stm32f4xx_it.c:262:6:TIM3_IRQHandler	72	static
 stm32f4xx_it.c:299:6:TIM4_IRQHandler	8	static
 stm32f4xx_it.c:333:6:I2C2_EV_IRQHandler	0	static
 stm32f4xx_it.c:347:6:I2C2_ER_IRQHandler	0	static

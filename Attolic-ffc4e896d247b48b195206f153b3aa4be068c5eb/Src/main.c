@@ -76,13 +76,6 @@ UART_HandleTypeDef huart2;
 #define FALSE 0
 #define TRUE 1
 
-
-
-#define macro1(A) 		((A) + ((A) < 10 ? 48 : 55))
-#define macro2(A,B) 	(((A) & (0b1111 << (4*(B)))) >> (4*(B)))
-#define macro3(A)		((A) - ((A) < 58 ? 48 : 55))
-#define macro4(a,b,c,d)	(((a) << 12) | ((b) << 8) | ((c) << 4) | ((d) << 0))
-#define macro5(a,b,c)	(((a) <<  8) | ((b) << 4) | ((c) << 0))
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -191,8 +184,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		char info[50];
-		sprintf(info, "estado: %d \n",estado);
+		//char info[50];
+		//sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 		//estado=2; para debug comunicación-desarrollo. Saltea homming y fines de carrera.
 	  if ((estado==2||estado==3)){
@@ -203,39 +196,7 @@ int main(void)
 		  if((estado==2 || estado==3)&&((HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9) == GPIO_PIN_SET)||(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13) == GPIO_PIN_SET))){
 		  		estado=5; //error
 		  		HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
-		  		//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
 		  		 }
-	//  }
-
-/*
-	  in[0]='N';
-	  		  //HAL_UART_Receive_DMA(&huart2, (uint8_t *)in, 1);
-	  	  if(__HAL_UART_GET_FLAG(&huart2,UART_FLAG_RXNE)==SET){
-	  	  HAL_UART_Receive(&huart2, (uint8_t *)in, 1, 1000);
-				if(in[0]=='T'){
-					HAL_UART_Transmit(&huart2, "Triangular\n", 11, 200);
-					triangle_wave(10,1000,2000);
-				}
-				else if(in[0]=='S'){
-					HAL_UART_Transmit(&huart2, "Senoidal\n", 9, 200);
-					sin_wave(10,1000,100);
-				}
-				else if(in[0]=='C'){
-									HAL_UART_Transmit(&huart2, "Constant\n", 9, 200);
-									const_vel(200);
-								}
-				if(in[0]=='V'){
-					HAL_UART_Transmit(&huart2, "Velocity: ", 10, 200);
-					for(int i=0;i<100;i++){
-						HAL_UART_Transmit(&huart2, "valor de i:", 11, 200);
-						HAL_UART_Transmit(&huart2, (uint8_t*)buffer, sprintf(buffer, "%d", i), 200);
-						HAL_UART_Transmit(&huart2, " , ", 3, 200);
-						HAL_UART_Transmit(&huart2, (uint8_t*)buffer, sprintf(buffer, "%d", velocidades[i]), 200);
-						HAL_UART_Transmit(&huart2, " \n", 2, 200);
-
-*/
-
-
 
     /* USER CODE END WHILE */
 
@@ -607,31 +568,13 @@ void sin_wave(int A,int F){
 	char info[50];
 	double deltaT=(htim3_Prescaler*(htim3_Period+1))/clock;  //porque tiene que cambiar al cuarto
 	//float period=0.01;
-
-	int phi=11;
 	sprintf(info, "senoidal,Amplitud:%d ,Frecuencia: %d\n",A,F);
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
-	int sign=1;
 	for (int i=0;i<10000;i++){
 		velocidades[i]=(int)(A*2*M_PI*F*cos((2*M_PI*F*i*deltaT)));
 		posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
 		velocidadesPulsos[i]=(int)(velocidades[i]*pulsosporRevolucion/mmporRevolucion);
-		//periodos[i]=(int)(1/(velocidadesPulsos[i]*htim4_Prescaler/clock));
-		//if(((i+period/2)%period)==0){
-		/*if(((i)%(period/2))==0){
-					sign=-sign;
-					}
-					*/
-		//velocidades[i]=(int)(65535*sign+vel-((sin(i*2*M_PI/period+(0.25*M_PI/period)))*vel))*sign;
-		//velocidades[i]=(int)((65535*sign)+((sin(i*2*M_PI/period)*vel)));
-		/*if(velocidades[i]<0){
-			velocidades[i]=velocidades[i]+65535;
-		}
-		else{
-			velocidades[i]=velocidades[i]-65535;
-			}
-*/
-		//velocidades[i]=(int)sin(i)*1000;
+
 	}
 	for (int i=0;i<1000;i++){
 		periodos[i]=(int)(1/(velocidadesPulsos[i]*htim4_Prescaler/clock));
@@ -662,98 +605,10 @@ void const_vel(int A,int F){
 }
 
 
-
-
-void homing(int freq){
-
-}
-
-// Devuelve el entero del bufferRX a partir del byte k
-uint16_t char2uint(int k, uint8_t* bufferRX) {
-	uint16_t aux16 = 0;
-	while (bufferRX[k] != ';') {
-		if (bufferRX[k] >= '0' && bufferRX[k] <= '9') {	// si el caracter es un numero
-			aux16 = aux16 * 10 + bufferRX[k] - '0'; //'0' es 48 en decimal o 0x30 en hexa
-			k++;
-		} else {	// si el caracter es != de un numero
-			return -1;
-		}
-	}
-	return aux16;
-}
-
-// Respuesta al comando ":0;" de tipo: ":EESSSSFFFF;"
-// Donde:
-//	- EE: Estado y Sub Estado (2 hexadecimales)
-// 	- SSSS: 16 bits de Inputs en 4 hexadecimales
-// 	- FFFF: 16 bits de flags en 4 hexadecimales
-void respuesta(UART_HandleTypeDef huart) {
-	char bufferTX[14];
-
-	// estas variables las saco del programa
-	uint16_t Inputs = 0xFFFF;
-	uint16_t Flags = 0xFFFF;
-	uint16_t estado = 3;
-	uint16_t sub_estado = 5;
-
-	bufferTX[0] = ':';
-	bufferTX[1] = macro1(estado); // codifico el entero 'estado' en un char hexadecimal
-	bufferTX[2] = macro1(sub_estado); // idem
-	bufferTX[3] = macro1(macro2(Flags,3)); // codifico de a 4 bits del entero 'Flags' en char hexadecimales
-	bufferTX[4] = macro1(macro2(Flags,2)); // siguientes 4 bits
-	bufferTX[5] = macro1(macro2(Flags,1)); // siguientes 4 bits
-	bufferTX[6] = macro1(macro2(Flags,0)); // siguientes 4 bits
-	bufferTX[7] = macro1(macro2(Inputs,3)); // idem...
-	bufferTX[8] = macro1(macro2(Inputs,2));
-	bufferTX[9] = macro1(macro2(Inputs,1));
-	bufferTX[10] = macro1(macro2(Inputs,0));
-	bufferTX[11] = ';';
-	bufferTX[12] = '\r';
-	bufferTX[13] = '\n';
-	HAL_UART_Transmit(&huart, (uint8_t*) bufferTX, 14, HAL_MAX_DELAY);
-}
-
-// Escribe en UART los pulsos absolutos de los 4 motores
-void printPasos(UART_HandleTypeDef huart) {
-	char bufferTX[20];
-	int x[4];
-	for (int i = 0; i < 4; i++) {
-		x[i] = (int) fabsl(12345 / 3); // estos números serían variables
-		x[i] = x[i] > 9999 ? 9999 : x[i]; // cómo máximo envío el 9999 por cada motor
-	}
-	sprintf(bufferTX, ":%04d%04d%04d%04d;\r\n", x[0], x[1], x[2], x[3]);
-	HAL_UART_Transmit(&huart, (uint8_t*) bufferTX, 20, HAL_MAX_DELAY); // transmite por UART
-}
-
-// procesamiento del comando de la UART
-/*
-void procesarUart(UART_HandleTypeDef huart,   uint8_t *rx_data, uint8_t rx_index) {
-	//delta_mant = (int) char2uint(1, bufferRX);
-	int freq;
-	int min;
-	if (rx_data[1]=='T'){ // En este switch solo observo el segundo byte
-		freq=((int)(rx_data[3]-'0'))*100+((int)(rx_data[4]-'0'))*10+(int)(rx_data[5]-'0');
-		HAL_UART_Transmit(&huart2, (uint8_t*) freq, 1, HAL_MAX_DELAY);
-	}
-	else if (rx_data[1]=='S'){
-		freq=((int)(rx_data[3]-'0'))*100+((int)(rx_data[4]-'0'))*10+(int)(rx_data[5]-'0');
-		HAL_UART_Transmit(&huart2, (uint8_t*) freq, 1, HAL_MAX_DELAY);
-	}
-		// Mensaje del tipo 'C213' lo convierto en "piso = 2" y "sobre = 13" (enteros)
-		//piso = bufferRX[1] - 48;
-	//	sobre = (bufferRX[2] - 48) * 10 + bufferRX[3] - 48;
-
-	return;
-}
-*/
-
-
 // Lectura de la uart
 void Polling_UART() {
 	int Frecuencia;
 	int Amplitud;
-	int max;
-	int vel;
 	uint8_t rx_data_UART[13];
 	if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == SET) { // preguntar por byte disponible en buffer
 		HAL_UART_Receive(&huart2, rx_data_UART, 13, HAL_MAX_DELAY); // leer 1 byte
@@ -797,7 +652,7 @@ void Polling_UART() {
 						HAL_UART_Transmit(&huart2, "valor de i:", 11, 200);
 						HAL_UART_Transmit(&huart2, (uint8_t*)buffer, sprintf(buffer, "%d", i), 200);
 						HAL_UART_Transmit(&huart2, " , ", 3, 200);
-						HAL_UART_Transmit(&huart2, (uint8_t*)buffer, sprintf(buffer, "%d", velocidades[i]), 200);
+						HAL_UART_Transmit(&huart2, (uint8_t*)buffer, sprintf(buffer, "%d", periodos[i]), 200);
 						HAL_UART_Transmit(&huart2, " \n", 2, 200);
 
 			}

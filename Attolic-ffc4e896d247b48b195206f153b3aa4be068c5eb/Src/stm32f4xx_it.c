@@ -76,7 +76,7 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
-extern int velocidades[10000];
+extern int periodos[10000];
 char buf[16];
 extern int posActual;
 extern int posCentral;
@@ -267,23 +267,23 @@ void TIM3_IRQHandler(void)
 	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	if(estado==3){
 	int static actualVel=0;
-	if (actualVel>9999){
+	if (actualVel>999){
 		actualVel=0;
 	}
 	else{
 		actualVel++;
 	}
-	if(velocidades[actualVel]<0){
+	if(periodos[actualVel]<0){
 		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_RESET);
 	}
 	else{
 		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_SET);
 	}
 	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
-	//sprintf(info, "velAct: %d\n",velocidades[actualVel]);
-	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
-	TIM4->ARR=abs(velocidades[actualVel]);
-	__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,((abs(velocidades[actualVel]))/2));
+	sprintf(info, "velAct: %d\n",periodos[actualVel]);
+	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
+	TIM4->ARR=abs(periodos[actualVel]);
+	__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,((abs(periodos[actualVel]))/2));
 	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
 	}
 

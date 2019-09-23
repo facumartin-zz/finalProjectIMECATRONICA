@@ -95,7 +95,7 @@ void Polling_UART();
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 double const clock=16000000;
-double const htim3_Prescaler = 16000;
+double const htim3_Prescaler = 1600;
 int const htim3_Period = 9;
 double const htim4_Prescaler = 2;
 int const htim4_Period = 200;
@@ -174,9 +174,9 @@ int main(void)
   TIM4->ARR=2000;       //desborde de tiempo de pwm en timer 4.
   __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,1000); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
 
-  estado=2; //forzado
+ // estado=2; //forzado
   //sin_wave(100,1);
-  const_vel(100,1);
+  //const_vel(100,1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -535,7 +535,6 @@ void triangle_wave(int freq, int min,int max){
 
 	    printf("%d\t, %12.7f\n", i, amplitude);
 	  }
-	  */
 		//y = abs((x++ % 6) - 3); to oscilate between 0 and 3, an period 6.
 		int period=100/freq;
 		float delta=((max-min)/period)*-1;
@@ -556,7 +555,7 @@ void triangle_wave(int freq, int min,int max){
 		}
 		}
 		HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
-		estado=3;
+		estado=3;*/
 		}
 
 

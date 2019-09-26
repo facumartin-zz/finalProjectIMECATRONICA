@@ -97,7 +97,7 @@ void Polling_UART();
 double const clock=16000000;
 double const htim3_Prescaler = 1600;
 int const htim3_Period = 9;
-double const htim4_Prescaler = 2;
+double const htim4_Prescaler = 1;
 int const htim4_Period = 200;
 int const pulsosporRevolucion=8000;
 int const mmporRevolucion=10;
@@ -576,10 +576,10 @@ void sin_wave(int A,int F){
 	}
 	for (int i=0;i<1000;i++){
 		periodos[i]=(int)(1/(velocidadesPulsos[i]*htim4_Prescaler/clock));
-		if (periodos[i]>65535){
+		if (abs(periodos[i])>65535 && periodos[i-1]>0){
 			periodos[i]=65535;
 		}
-		if (periodos[i]<-65535){
+		if (abs(periodos[i])>65535 && periodos[i-1]<0){
 			periodos[i]=-65535;
 		}
 

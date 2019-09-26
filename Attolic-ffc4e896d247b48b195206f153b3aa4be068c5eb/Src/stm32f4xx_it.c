@@ -283,7 +283,7 @@ void TIM3_IRQHandler(void)
 	//sprintf(info, "velAct: %d\n",periodos[actualVel]);
 	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	TIM4->ARR=abs(periodos[actualVel]);
-	__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,((abs(periodos[actualVel]))/2));
+	__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,((abs(periodos[actualVel]))/2)-1);
 	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
 	}
 

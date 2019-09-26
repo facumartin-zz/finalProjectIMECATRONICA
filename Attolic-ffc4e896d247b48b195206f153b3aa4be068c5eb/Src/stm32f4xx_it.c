@@ -280,8 +280,8 @@ void TIM3_IRQHandler(void)
 		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_SET);
 	}
 	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
-	sprintf(info, "velAct: %d\n",periodos[actualVel]);
-	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
+	//sprintf(info, "velAct: %d\n",periodos[actualVel]);
+	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	TIM4->ARR=abs(periodos[actualVel]);
 	__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,((abs(periodos[actualVel]))/2));
 	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);

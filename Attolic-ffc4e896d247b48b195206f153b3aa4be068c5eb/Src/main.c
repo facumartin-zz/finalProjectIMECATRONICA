@@ -171,8 +171,8 @@ int main(void)
   int maxposition;
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-  TIM4->ARR=2000;       //desborde de tiempo de pwm en timer 4.
-  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,1000); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+  TIM4->ARR=40;       //desborde de tiempo de pwm en timer 4.
+  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,20); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
 
  // estado=2; //forzado
   //sin_wave(100,1);
@@ -570,15 +570,20 @@ void sin_wave(int A,int F){
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	for (int i=0;i<10000;i++){
 		velocidades[i]=(int)(A*2*M_PI*F*cos((2*M_PI*F*i*deltaT)));
-		posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
+		//posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
 		velocidadesPulsos[i]=(int)(velocidades[i]*pulsosporRevolucion/mmporRevolucion);
 
 	}
 	for (int i=0;i<1000;i++){
 		periodos[i]=(int)(1/(velocidadesPulsos[i]*htim4_Prescaler/clock));
+		if (periodos[i]>65535){
+			periodos[i]=65535;
+		}
+		if (periodos[i]<-65535){
+			periodos[i]=-65535;
 		}
 
-
+}
 	estado=3;
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 }
@@ -588,7 +593,8 @@ void const_vel(int A,int F){
 	char info[50];
 	int moduloVelocidad=(int)(1/((A*F/2*pulsosporRevolucion/mmporRevolucion)*htim4_Prescaler/clock));
 	//double period=10000/(100*freq);
-	int period=10000/(100*(F*2));
+	double deltaT=(htim3_Prescaler*(htim3_Period+1))/clock;
+	int period=(1/deltaT)/(F*2);
 	sprintf(info, "Constante,vel:%d ,periodo: %d\n",A,F);
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	int sign=1;

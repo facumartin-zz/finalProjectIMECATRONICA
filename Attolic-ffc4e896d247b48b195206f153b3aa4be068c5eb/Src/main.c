@@ -99,7 +99,7 @@ double const htim3_Prescaler = 1600;
 int const htim3_Period = 9;
 double const htim4_Prescaler = 1;
 int const htim4_Period = 200;
-int const pulsosporRevolucion=8000;
+int const pulsosporRevolucion=5000;
 int const mmporRevolucion=10;
 
 int estado=0;
@@ -171,8 +171,8 @@ int main(void)
   int maxposition;
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-  TIM4->ARR=40;       //desborde de tiempo de pwm en timer 4.
-  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,20); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+  TIM4->ARR=1000;       //desborde de tiempo de pwm en timer 4.
+  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,500); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
 
  // estado=2; //forzado
   //sin_wave(100,1);
@@ -355,7 +355,7 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 24;
+  htim4.Init.Prescaler = htim4_Prescaler;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim4.Init.Period = 200;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

@@ -268,16 +268,16 @@ void TIM3_IRQHandler(void)
 	//sprintf(info, "posAct: %d\n",posActual);
 	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	if(estado==3){
-	int static actualVel=0;
+	int static actualVel=1;
 	actualVel++;
-	if (actualVel>999){
+	/*if (actualVel>999){
 		actualVel=0;
 		posActual=0;
 		HAL_TIM_Base_Stop_IT(&htim4);
 		HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
 		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_15,GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
-	}
+	}*/
 	if(periodos[actualVel]<0){
 		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_RESET);
 	}
@@ -289,7 +289,8 @@ void TIM3_IRQHandler(void)
 	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	posicionesActPulsos[actualVel]=posActual;
 	TIM4->ARR=abs(periodos[actualVel]);
-	__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,((abs(periodos[actualVel]))/2)-1);
+	//__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,((abs(periodos[actualVel]))/2)-1);
+	TIM4->CCR1=(abs(periodos[actualVel]/2))-1;
 	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
 	}
 

@@ -574,24 +574,23 @@ void sin_wave(int A,int F){
 	sprintf(info, "senoidal,Amplitud:%d ,Frecuencia: %d\n",A,F);
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	for (int i=0;i<1000;i++){
-		velocidades[i]=(int)(A*2*M_PI*F*cos((2*M_PI*F*i*deltaT)));
-		posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
-		velocidadesPulsos[i]=(int)(velocidades[i]*pulsosporRevolucion/mmporRevolucion);
-		posicionesPulsos[i]=(int)(posiciones[i]*pulsosporRevolucion/mmporRevolucion);
-
-	}
-
-	for (int i=0;i<1000;i++){
-		periodos[i]=(int)(1/(velocidadesPulsos[i]*htim4_Prescaler/clock));
+		velocidades[i]=(int)((double)A*2.0*M_PI*(double)F*cos((2.0*(double)M_PI*(double)F*(double)i*(double)deltaT)));
+		posiciones[i]=(int)((double)A*sin(2.0*(double)M_PI*(double)F*(double)i*(double)deltaT));
+		velocidadesPulsos[i]=(int)((double)velocidades[i]*(double)pulsosporRevolucion/(double)mmporRevolucion);
+		posicionesPulsos[i]=(int)((double)posiciones[i]*(double)pulsosporRevolucion/(double)mmporRevolucion);
+		periodos[i]=(int)(1.0/((double)velocidadesPulsos[i]*(double)htim4_Prescaler/(double)clock));
 		if (abs(periodos[i])>65535 && periodos[i-1]>0){
 			periodos[i]=65535;
 		}
 		if (abs(periodos[i])>65535 && periodos[i-1]<0){
 			periodos[i]=-65535;
 		}
+	}
 
-}
 	estado=3;
+	TIM4->ARR=abs(periodos[0]);
+	//__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,((abs(periodos[actualVel]))/2)-1);
+	TIM4->CCR1=(abs(periodos[0]/2))-1;
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 }

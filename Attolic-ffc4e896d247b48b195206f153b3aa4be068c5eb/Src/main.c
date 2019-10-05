@@ -180,7 +180,7 @@ int main(void)
   __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,500); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
 
   estado=2; //forzado
-  sin_wave(10,1);
+  sin_wave(10,10);
   //const_vel(100,1);
   /* USER CODE END 2 */
 

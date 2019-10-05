@@ -25,23 +25,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  10 .ARM.attributes 00000030  00000000  00000000  00020070  2**0
                   CONTENTS, READONLY
- 11 .debug_info   0001760f  00000000  00000000  000200a0  2**0
+ 11 .debug_info   00017610  00000000  00000000  000200a0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_abbrev 000028f6  00000000  00000000  000376af  2**0
+ 12 .debug_abbrev 000028f6  00000000  00000000  000376b0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_loc    00009252  00000000  00000000  00039fa5  2**0
+ 13 .debug_loc    00009252  00000000  00000000  00039fa6  2**0
                   CONTENTS, READONLY, DEBUGGING
  14 .debug_aranges 00000aa0  00000000  00000000  000431f8  2**3
                   CONTENTS, READONLY, DEBUGGING
  15 .debug_ranges 00001010  00000000  00000000  00043c98  2**3
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_line   000067ce  00000000  00000000  00044ca8  2**0
+ 16 .debug_line   000067d3  00000000  00000000  00044ca8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_str    00004680  00000000  00000000  0004b476  2**0
+ 17 .debug_str    00004680  00000000  00000000  0004b47b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .comment      0000007c  00000000  00000000  0004faf6  2**0
+ 18 .comment      0000007c  00000000  00000000  0004fafb  2**0
                   CONTENTS, READONLY
- 19 .debug_frame  000028b4  00000000  00000000  0004fb74  2**2
+ 19 .debug_frame  000028b4  00000000  00000000  0004fb78  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -7262,7 +7262,7 @@ void Polling_UART() {
   htim4.Instance = TIM4;
  8003504:	f8df 9310 	ldr.w	r9, [pc, #784]	; 8003818 <main+0x31c>
   htim3.Instance = TIM3;
- 8003508:	4fb4      	ldr	r7, [pc, #720]	; (80037dc <main+0x2e0>)
+ 8003508:	4eb4      	ldr	r6, [pc, #720]	; (80037dc <main+0x2e0>)
 	OK_UART2 = FALSE;
  800350a:	2400      	movs	r4, #0
  800350c:	701c      	strb	r4, [r3, #0]
@@ -7340,7 +7340,7 @@ void Polling_UART() {
  8003592:	4897      	ldr	r0, [pc, #604]	; (80037f0 <main+0x2f4>)
  8003594:	f7fd fe26 	bl	80011e4 <HAL_GPIO_WritePin>
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
- 8003598:	2601      	movs	r6, #1
+ 8003598:	2701      	movs	r7, #1
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_4;
  800359a:	2315      	movs	r3, #21
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -7349,7 +7349,7 @@ void Polling_UART() {
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_4;
  80035a0:	930b      	str	r3, [sp, #44]	; 0x2c
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
- 80035a2:	960c      	str	r6, [sp, #48]	; 0x30
+ 80035a2:	970c      	str	r7, [sp, #48]	; 0x30
   GPIO_InitStruct.Pull = GPIO_NOPULL;
  80035a4:	940d      	str	r4, [sp, #52]	; 0x34
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -7360,7 +7360,7 @@ void Polling_UART() {
  80035ac:	a90b      	add	r1, sp, #44	; 0x2c
  80035ae:	4891      	ldr	r0, [pc, #580]	; (80037f4 <main+0x2f8>)
   GPIO_InitStruct.Pin = GPIO_PIN_0;
- 80035b0:	960b      	str	r6, [sp, #44]	; 0x2c
+ 80035b0:	970b      	str	r7, [sp, #44]	; 0x2c
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
  80035b2:	950c      	str	r5, [sp, #48]	; 0x30
   GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -7377,7 +7377,7 @@ void Polling_UART() {
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
  80035c2:	f04f 0802 	mov.w	r8, #2
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
- 80035c6:	960c      	str	r6, [sp, #48]	; 0x30
+ 80035c6:	970c      	str	r7, [sp, #48]	; 0x30
   GPIO_InitStruct.Pull = GPIO_NOPULL;
  80035c8:	940d      	str	r4, [sp, #52]	; 0x34
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -7418,7 +7418,7 @@ void Polling_UART() {
   GPIO_InitStruct.Pin = GPIO_PIN_14|GPIO_PIN_3|GPIO_PIN_7;
  8003600:	930b      	str	r3, [sp, #44]	; 0x2c
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
- 8003602:	960c      	str	r6, [sp, #48]	; 0x30
+ 8003602:	970c      	str	r7, [sp, #48]	; 0x30
   GPIO_InitStruct.Pull = GPIO_NOPULL;
  8003604:	940d      	str	r4, [sp, #52]	; 0x34
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -7433,7 +7433,7 @@ void Polling_UART() {
   GPIO_InitStruct.Pin = GPIO_PIN_15;
  8003614:	930b      	str	r3, [sp, #44]	; 0x2c
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
- 8003616:	960c      	str	r6, [sp, #48]	; 0x30
+ 8003616:	970c      	str	r7, [sp, #48]	; 0x30
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
  8003618:	940e      	str	r4, [sp, #56]	; 0x38
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
@@ -7486,7 +7486,7 @@ void Polling_UART() {
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
  8003670:	4628      	mov	r0, r5
   htim4.Init.Prescaler = htim4_Prescaler;
- 8003672:	606e      	str	r6, [r5, #4]
+ 8003672:	606f      	str	r7, [r5, #4]
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
  8003674:	60ac      	str	r4, [r5, #8]
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -7572,32 +7572,32 @@ void Polling_UART() {
   htim3.Init.Prescaler = htim3_Prescaler;
  80036fa:	4a40      	ldr	r2, [pc, #256]	; (80037fc <main+0x300>)
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
- 80036fc:	60bc      	str	r4, [r7, #8]
+ 80036fc:	60b4      	str	r4, [r6, #8]
   htim3.Init.Prescaler = htim3_Prescaler;
  80036fe:	f44f 63c8 	mov.w	r3, #1600	; 0x640
- 8003702:	e887 000c 	stmia.w	r7, {r2, r3}
+ 8003702:	e886 000c 	stmia.w	r6, {r2, r3}
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
- 8003706:	4638      	mov	r0, r7
+ 8003706:	4630      	mov	r0, r6
   htim3.Init.Period = htim3_Period;
  8003708:	2309      	movs	r3, #9
- 800370a:	60fb      	str	r3, [r7, #12]
+ 800370a:	60f3      	str	r3, [r6, #12]
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
- 800370c:	613c      	str	r4, [r7, #16]
+ 800370c:	6134      	str	r4, [r6, #16]
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
  800370e:	f7fe ff89 	bl	8002624 <HAL_TIM_Base_Init>
   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
  8003712:	a907      	add	r1, sp, #28
- 8003714:	4638      	mov	r0, r7
+ 8003714:	4630      	mov	r0, r6
   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
  8003716:	f8cd b01c 	str.w	fp, [sp, #28]
   if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
  800371a:	f7fe fdbf 	bl	800229c <HAL_TIM_ConfigClockSource>
   if (HAL_TIM_OC_Init(&htim3) != HAL_OK)
- 800371e:	4638      	mov	r0, r7
+ 800371e:	4630      	mov	r0, r6
  8003720:	f7fe ff9a 	bl	8002658 <HAL_TIM_OC_Init>
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
  8003724:	a905      	add	r1, sp, #20
- 8003726:	4638      	mov	r0, r7
+ 8003726:	4630      	mov	r0, r6
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
  8003728:	9405      	str	r4, [sp, #20]
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
@@ -7607,11 +7607,11 @@ void Polling_UART() {
   if (HAL_TIM_OC_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
  8003730:	4622      	mov	r2, r4
  8003732:	a90b      	add	r1, sp, #44	; 0x2c
- 8003734:	4638      	mov	r0, r7
+ 8003734:	4630      	mov	r0, r6
   sConfigOC.OCMode = TIM_OCMODE_TIMING;
  8003736:	940b      	str	r4, [sp, #44]	; 0x2c
   huart2.Instance = USART2;
- 8003738:	4f31      	ldr	r7, [pc, #196]	; (8003800 <main+0x304>)
+ 8003738:	4e31      	ldr	r6, [pc, #196]	; (8003800 <main+0x304>)
   sConfigOC.Pulse = 0;
  800373a:	940c      	str	r4, [sp, #48]	; 0x30
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
@@ -7623,24 +7623,24 @@ void Polling_UART() {
   huart2.Init.BaudRate = 115200;
  8003744:	492f      	ldr	r1, [pc, #188]	; (8003804 <main+0x308>)
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
- 8003746:	60bc      	str	r4, [r7, #8]
+ 8003746:	60b4      	str	r4, [r6, #8]
   huart2.Init.BaudRate = 115200;
  8003748:	f44f 33e1 	mov.w	r3, #115200	; 0x1c200
- 800374c:	e887 000a 	stmia.w	r7, {r1, r3}
+ 800374c:	e886 000a 	stmia.w	r6, {r1, r3}
   if (HAL_UART_Init(&huart2) != HAL_OK)
- 8003750:	4638      	mov	r0, r7
+ 8003750:	4630      	mov	r0, r6
   huart2.Init.Mode = UART_MODE_TX_RX;
  8003752:	230c      	movs	r3, #12
   huart2.Init.StopBits = UART_STOPBITS_1;
- 8003754:	60fc      	str	r4, [r7, #12]
+ 8003754:	60f4      	str	r4, [r6, #12]
   huart2.Init.Parity = UART_PARITY_NONE;
- 8003756:	613c      	str	r4, [r7, #16]
+ 8003756:	6134      	str	r4, [r6, #16]
   huart2.Init.Mode = UART_MODE_TX_RX;
- 8003758:	617b      	str	r3, [r7, #20]
+ 8003758:	6173      	str	r3, [r6, #20]
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
- 800375a:	61bc      	str	r4, [r7, #24]
+ 800375a:	61b4      	str	r4, [r6, #24]
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
- 800375c:	61fc      	str	r4, [r7, #28]
+ 800375c:	61f4      	str	r4, [r6, #28]
   if (HAL_UART_Init(&huart2) != HAL_OK)
  800375e:	f7ff fa77 	bl	8002c50 <HAL_UART_Init>
   hi2c2.Instance = I2C2;
@@ -7675,39 +7675,40 @@ void Polling_UART() {
   estado=2; //forzado
  800378a:	4c22      	ldr	r4, [pc, #136]	; (8003814 <main+0x318>)
   HAL_UART_Transmit(&huart2, "OK ", 3, 200);
- 800378c:	4638      	mov	r0, r7
+ 800378c:	4630      	mov	r0, r6
  800378e:	f7ff fa8d 	bl	8002cac <HAL_UART_Transmit>
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
- 8003792:	4632      	mov	r2, r6
- 8003794:	4631      	mov	r1, r6
+ 8003792:	463a      	mov	r2, r7
+ 8003794:	4639      	mov	r1, r7
  8003796:	4815      	ldr	r0, [pc, #84]	; (80037ec <main+0x2f0>)
 		  if((estado==2 || estado==3)&&((HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9) == GPIO_PIN_SET)||(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13) == GPIO_PIN_SET))){
- 8003798:	4f14      	ldr	r7, [pc, #80]	; (80037ec <main+0x2f0>)
+ 8003798:	4e15      	ldr	r6, [pc, #84]	; (80037f0 <main+0x2f4>)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
  800379a:	f7fd fd23 	bl	80011e4 <HAL_GPIO_WritePin>
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
- 800379e:	4632      	mov	r2, r6
+ 800379e:	463a      	mov	r2, r7
  80037a0:	2110      	movs	r1, #16
  80037a2:	4811      	ldr	r0, [pc, #68]	; (80037e8 <main+0x2ec>)
- 80037a4:	f7fd fd1e 	bl	80011e4 <HAL_GPIO_WritePin>
-  TIM4->ARR=1000;       //desborde de tiempo de pwm en timer 4.
- 80037a8:	f44f 737a 	mov.w	r3, #1000	; 0x3e8
- 80037ac:	f8c9 302c 	str.w	r3, [r9, #44]	; 0x2c
-  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,500); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
- 80037b0:	682b      	ldr	r3, [r5, #0]
-  estado=2; //forzado
- 80037b2:	f8c4 8000 	str.w	r8, [r4]
-  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,500); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
- 80037b6:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
-  sin_wave(10,1);
- 80037ba:	4631      	mov	r1, r6
-  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,500); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
- 80037bc:	635a      	str	r2, [r3, #52]	; 0x34
-  sin_wave(10,1);
- 80037be:	200a      	movs	r0, #10
- 80037c0:	f7ff fc56 	bl	8003070 <sin_wave>
 		  if((estado==2 || estado==3)&&((HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9) == GPIO_PIN_SET)||(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13) == GPIO_PIN_SET))){
- 80037c4:	4e0a      	ldr	r6, [pc, #40]	; (80037f0 <main+0x2f4>)
+ 80037a4:	4f11      	ldr	r7, [pc, #68]	; (80037ec <main+0x2f0>)
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+ 80037a6:	f7fd fd1d 	bl	80011e4 <HAL_GPIO_WritePin>
+  TIM4->ARR=1000;       //desborde de tiempo de pwm en timer 4.
+ 80037aa:	f44f 737a 	mov.w	r3, #1000	; 0x3e8
+ 80037ae:	f8c9 302c 	str.w	r3, [r9, #44]	; 0x2c
+  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,500); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+ 80037b2:	682b      	ldr	r3, [r5, #0]
+  estado=2; //forzado
+ 80037b4:	f8c4 8000 	str.w	r8, [r4]
+  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,500); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+ 80037b8:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
+  sin_wave(10,10);
+ 80037bc:	210a      	movs	r1, #10
+  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,500); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+ 80037be:	635a      	str	r2, [r3, #52]	; 0x34
+  sin_wave(10,10);
+ 80037c0:	4608      	mov	r0, r1
+ 80037c2:	f7ff fc55 	bl	8003070 <sin_wave>
 	  if ((estado==2||estado==3)){
  80037c6:	6823      	ldr	r3, [r4, #0]
  80037c8:	3b02      	subs	r3, #2

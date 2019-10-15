@@ -106,9 +106,12 @@ int estado=0;
 int posActual=0;
 int posMax=0;
 int posCentral=0;
-volatile int velocidades[10000];
-volatile int velocidadesPulsos[10000];
-volatile int posiciones[10000];
+
+volatile int velocidades[1000];
+volatile int velocidadesPulsos[1000];
+volatile int posiciones[1000];
+volatile int posicionesPulsos[1000];
+volatile int posicionesActPulsos[1000];
 volatile int periodos[1000];
 // variables para comunicacion UART2
 uint8_t rx_index_UART2;
@@ -156,7 +159,8 @@ int main(void)
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim3);
-  HAL_TIM_Base_Start_IT(&htim4);
+  HAL_TIM_Base_Start(&htim3);
+  //HAL_TIM_Base_Start_IT(&htim4);
   //HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_1);
   HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
   //HAL_TIM_Base_Start_IT(&htim3);
@@ -171,8 +175,8 @@ int main(void)
   int maxposition;
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-  TIM4->ARR=1000;       //desborde de tiempo de pwm en timer 4.
-  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,500); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+  TIM4->ARR=200;       //desborde de tiempo de pwm en timer 4.
+  __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,100); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
 
  // estado=2; //forzado
   //sin_wave(100,1);
@@ -568,7 +572,7 @@ void sin_wave(int A,int F){
 	//float period=0.01;
 	sprintf(info, "senoidal,Amplitud:%d ,Frecuencia: %d\n",A,F);
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
-	for (int i=0;i<10000;i++){
+	for (int i=0;i<1000;i++){
 		velocidades[i]=(int)(A*2*M_PI*F*cos((2*M_PI*F*i*deltaT)));
 		//posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
 		velocidadesPulsos[i]=(int)(velocidades[i]*pulsosporRevolucion/mmporRevolucion);
@@ -585,6 +589,12 @@ void sin_wave(int A,int F){
 
 }
 	estado=3;
+	TIM4->CNT=0;
+		TIM4->ARR=(uint)abs(periodos[0]);
+		TIM4->CCR1=(uint)(abs((periodos[0]/2)));
+
+	HAL_TIM_Base_Start_IT(&htim3);
+	//HAL_TIM_Base_Start_IT(&htim4);
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 }
 

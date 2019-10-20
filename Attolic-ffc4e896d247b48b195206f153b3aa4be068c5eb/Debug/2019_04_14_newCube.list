@@ -8585,10 +8585,10 @@ void TIM3_IRQHandler(void)
 	char info[50];
 	//sprintf(info, "posAct: %d\n",posActual);
 	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
-	if(estado==6){
+	if(estado==5){
  8003cc2:	4b1e      	ldr	r3, [pc, #120]	; (8003d3c <TIM3_IRQHandler+0x7c>)
  8003cc4:	681b      	ldr	r3, [r3, #0]
- 8003cc6:	2b06      	cmp	r3, #6
+ 8003cc6:	2b05      	cmp	r3, #5
  8003cc8:	d133      	bne.n	8003d32 <TIM3_IRQHandler+0x72>
 	int static actualVel=0;
 	if (actualVel>999){

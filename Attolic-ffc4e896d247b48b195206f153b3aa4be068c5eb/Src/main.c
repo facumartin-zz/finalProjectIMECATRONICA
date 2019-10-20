@@ -105,7 +105,7 @@ int const mmporRevolucion=10;
 int estado=0;
 int posActual=0;
 int posMax=0;
-int posCentral=0;
+int posHome=0;
 
 volatile int velocidades[1000];
 volatile int velocidadesPulsos[1000];
@@ -562,7 +562,9 @@ void triangle_wave(int freq, int min,int max){
 		estado=3;*/
 		}
 
+void homing(double homePosition){
 
+}
 
 void sin_wave(int A,int F){
 	//y = 3 * sin((float)x / 10); oscilating between 3 and -3 period 20pi.

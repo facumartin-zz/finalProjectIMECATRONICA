@@ -25,23 +25,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  10 .ARM.attributes 00000030  00000000  00000000  00020070  2**0
                   CONTENTS, READONLY
- 11 .debug_info   000175d9  00000000  00000000  000200a0  2**0
+ 11 .debug_info   00017605  00000000  00000000  000200a0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_abbrev 00002909  00000000  00000000  00037679  2**0
+ 12 .debug_abbrev 00002909  00000000  00000000  000376a5  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_loc    0000925f  00000000  00000000  00039f82  2**0
+ 13 .debug_loc    0000925f  00000000  00000000  00039fae  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_aranges 00000aa0  00000000  00000000  000431e8  2**3
+ 14 .debug_aranges 00000aa8  00000000  00000000  00043210  2**3
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_ranges 00000ff0  00000000  00000000  00043c88  2**3
+ 15 .debug_ranges 00000ff8  00000000  00000000  00043cb8  2**3
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_line   000067bc  00000000  00000000  00044c78  2**0
+ 16 .debug_line   000067cc  00000000  00000000  00044cb0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_str    00004694  00000000  00000000  0004b434  2**0
+ 17 .debug_str    000046a5  00000000  00000000  0004b47c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .comment      0000007c  00000000  00000000  0004fac8  2**0
+ 18 .comment      0000007c  00000000  00000000  0004fb21  2**0
                   CONTENTS, READONLY
- 19 .debug_frame  00002870  00000000  00000000  0004fb44  2**2
+ 19 .debug_frame  00002880  00000000  00000000  0004fba0  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -6696,10 +6696,10 @@ void SystemClock_Config(void)
  8003084:	40007000 	.word	0x40007000
 
 08003088 <sin_wave>:
-		estado=3;*/
-		}
 
+void homing(double homePosition){
 
+}
 
 void sin_wave(int A,int F){
  8003088:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
@@ -8490,7 +8490,7 @@ void TIM4_IRQHandler(void)
   /* USER CODE BEGIN TIM4_IRQn 0 */
 
 	char info[50];
-	if ((estado==0) || (estado==1 && posCentral!=posActual) || (estado==3) || (estado==4)){
+	if ((estado==0) || (estado==1 && posHome!=posActual) || (estado==3) || (estado==4)){
  8003bce:	4c1f      	ldr	r4, [pc, #124]	; (8003c4c <TIM4_IRQHandler+0x80>)
  8003bd0:	6823      	ldr	r3, [r4, #0]
  8003bd2:	b1eb      	cbz	r3, 8003c10 <TIM4_IRQHandler+0x44>
@@ -8506,7 +8506,7 @@ void TIM4_IRQHandler(void)
 	}
 	}
 	else if (estado==1){
-		if (posCentral==posActual){
+		if (posHome==posActual){
 		HAL_TIM_Base_Stop_IT(&htim3);
  8003be4:	481c      	ldr	r0, [pc, #112]	; (8003c58 <TIM4_IRQHandler+0x8c>)
  8003be6:	f7fe fb4f 	bl	8002288 <HAL_TIM_Base_Stop_IT>
@@ -8527,7 +8527,7 @@ void TIM4_IRQHandler(void)
  8003c02:	4818      	ldr	r0, [pc, #96]	; (8003c64 <TIM4_IRQHandler+0x98>)
  8003c04:	f7ff f860 	bl	8002cc8 <HAL_UART_Transmit>
  8003c08:	e00b      	b.n	8003c22 <TIM4_IRQHandler+0x56>
-	if ((estado==0) || (estado==1 && posCentral!=posActual) || (estado==3) || (estado==4)){
+	if ((estado==0) || (estado==1 && posHome!=posActual) || (estado==3) || (estado==4)){
  8003c0a:	3b03      	subs	r3, #3
  8003c0c:	2b01      	cmp	r3, #1
  8003c0e:	d808      	bhi.n	8003c22 <TIM4_IRQHandler+0x56>
@@ -8644,13 +8644,13 @@ void EXTI15_10_IRQHandler(void)
  8003cb0:	4a10      	ldr	r2, [pc, #64]	; (8003cf4 <EXTI15_10_IRQHandler+0x60>)
  8003cb2:	681b      	ldr	r3, [r3, #0]
  8003cb4:	6013      	str	r3, [r2, #0]
-  posCentral=posMax/2;
+  posHome=posMax/2;
  8003cb6:	2202      	movs	r2, #2
  8003cb8:	fb93 f3f2 	sdiv	r3, r3, r2
  8003cbc:	4a0e      	ldr	r2, [pc, #56]	; (8003cf8 <EXTI15_10_IRQHandler+0x64>)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
  8003cbe:	2110      	movs	r1, #16
-  posCentral=posMax/2;
+  posHome=posMax/2;
  8003cc0:	6013      	str	r3, [r2, #0]
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
  8003cc2:	4602      	mov	r2, r0

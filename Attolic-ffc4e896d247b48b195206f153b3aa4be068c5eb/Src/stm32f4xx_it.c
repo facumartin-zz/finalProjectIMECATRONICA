@@ -83,7 +83,7 @@ extern int posicionesPulsos[1001];
 extern int posicionesActPulsos[1001];
 char buf[16];
 extern int posActual;
-extern int posCentral;
+extern int posHome;
 extern int estado;
 extern int posMax;
 int actualVel=0;
@@ -308,7 +308,7 @@ void TIM4_IRQHandler(void)
   /* USER CODE BEGIN TIM4_IRQn 0 */
 
 	char info[50];
-	if ((estado==0) || (estado==1 && posCentral!=posActual) || (estado==3) || (estado==4)){
+	if ((estado==0) || (estado==1 && posHome!=posActual) || (estado==3) || (estado==4)){
 		//sprintf(info, "posAct: %d\n",posActual);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	if (HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_4) == GPIO_PIN_RESET){
@@ -319,7 +319,7 @@ void TIM4_IRQHandler(void)
 	}
 	}
 	else if (estado==1){
-		if (posCentral==posActual){
+		if (posHome==posActual){
 		HAL_TIM_Base_Stop_IT(&htim3);
 		HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
 		HAL_TIM_Base_Start_IT(&htim4);
@@ -390,7 +390,7 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
   if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13) == GPIO_PIN_SET){
   posMax=posActual;
-  posCentral=posMax/2;
+  posHome=posMax/2;
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
   estado=1;
   HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);

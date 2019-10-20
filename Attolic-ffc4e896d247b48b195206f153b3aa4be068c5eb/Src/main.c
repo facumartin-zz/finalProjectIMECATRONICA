@@ -193,13 +193,12 @@ int main(void)
 		//sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 		//estado=2; para debug comunicación-desarrollo. Saltea homming y fines de carrera.
-	  if ((estado==2||estado==3)){
+	  if ((estado==3 || estado==4 || estado==5)){
 		  Polling_UART();
-
 		  //const_vel(100,10);
 	  }
-		  if((estado==2 || estado==3)&&((HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9) == GPIO_PIN_SET)||(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13) == GPIO_PIN_SET))){
-		  		estado=5; //error
+		  if((estado==3 || estado==4 || estado==5)&&((HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9) == GPIO_PIN_SET)||(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13) == GPIO_PIN_SET))){
+		  		estado=0;
 		  		HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
 		  		 }
 
@@ -576,11 +575,23 @@ void homing(){
     if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9)==GPIO_PIN_SET){
     estado=1;
 	posActual=0;
+	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
     }
     if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13)==GPIO_PIN_SET){
 	estado=0;
+	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+	}
+    if(estado==4){
+    	if (posActual>posHome){
+    		HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
+    		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+    	}
+    	if (posActual<posHome){
+    		HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
+    		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+    	}
 	}
 }
 

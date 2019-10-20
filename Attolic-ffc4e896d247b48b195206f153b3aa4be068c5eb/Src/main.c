@@ -106,6 +106,8 @@ int estado=0;
 int posActual=0;
 int posMax=0;
 int posHome=0;
+int posCentral=0;
+float velHoming=0;
 
 volatile int velocidades[1000];
 volatile int velocidadesPulsos[1000];
@@ -562,20 +564,39 @@ void triangle_wave(int freq, int min,int max){
 		estado=3;*/
 		}
 
-void homing(double homePosition){
-
+void homing(){
+	int velocidad=0;
+	int periodo=0;
+	int compareMatch=0;
+	velocidad=(int)(velHoming*pulsosporRevolucion/mmporRevolucion);
+	periodo=(int)(1/(velocidad*htim4_Prescaler/clock));
+	TIM4->ARR=periodo;       //desborde de tiempo de pwm en timer 4.
+	compareMatch=(int)(periodo/2);
+    __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,compareMatch); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+    if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9)==GPIO_PIN_SET){
+    estado=1;
+	posActual=0;
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+    }
+    if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13)==GPIO_PIN_SET){
+	estado=0;
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+	}
 }
 
 void sin_wave(int A,int F){
 	//y = 3 * sin((float)x / 10); oscilating between 3 and -3 period 20pi.
 	//const float CICLE=(3.14*2)/110;
 	char info[50];
+	posHome=posCentral-(double)(A/2*pulsosporRevolucion/mmporRevolucion);
+	estado=4;
+	homing();
 	double deltaT=(htim3_Prescaler*(htim3_Period+1))/clock;  //porque tiene que cambiar al cuarto
 	//float period=0.01;
 	sprintf(info, "senoidal,Amplitud:%d ,Frecuencia: %d\n",A,F);
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	for (int i=0;i<1000;i++){
-		velocidades[i]=(int)(A*2*M_PI*F*cos((2*M_PI*F*i*deltaT)));
+		velocidades[i]=(int)(A*2*M_PI*F*sin((2*M_PI*F*i*deltaT)));
 		//posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
 		velocidadesPulsos[i]=(int)(velocidades[i]*pulsosporRevolucion/mmporRevolucion);
 
@@ -590,7 +611,7 @@ void sin_wave(int A,int F){
 		}
 
 }
-	estado=3;
+	while(estado!=5){
 	TIM4->CNT=0;
 		TIM4->ARR=(uint)abs(periodos[0]);
 		TIM4->CCR1=(uint)(abs((periodos[0]/2)));
@@ -598,6 +619,7 @@ void sin_wave(int A,int F){
 	HAL_TIM_Base_Start_IT(&htim3);
 	//HAL_TIM_Base_Start_IT(&htim4);
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
+	}
 }
 
 

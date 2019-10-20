@@ -256,6 +256,7 @@ void EXTI9_5_IRQHandler(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
   HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
   HAL_UART_Transmit(&huart2, (uint8_t*)";  FC1  ;", 9, 200);
+  estado=1;
   }
 
   /* USER CODE END EXTI9_5_IRQn 1 */
@@ -389,12 +390,14 @@ void EXTI15_10_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
   if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13) == GPIO_PIN_SET){
-  posMax=posActual;
-  posHome=posMax/2;
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-  estado=1;
-  HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
-  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
+	 if(estado==1){
+		  posMax=posActual;
+		  posHome=posMax/2;
+		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+		  HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
+		  estado=2;
+		  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
+	  }
   }
 
   /* USER CODE END EXTI15_10_IRQn 1 */

@@ -626,11 +626,10 @@ void sin_wave(int A,int F){
 	TIM4->CNT=0;
 		TIM4->ARR=(uint)abs(periodos[0]);
 		TIM4->CCR1=(uint)(abs((periodos[0]/2)));
-
+	}
 	HAL_TIM_Base_Start_IT(&htim3);
 	//HAL_TIM_Base_Start_IT(&htim4);
 	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
-	}
 }
 
 

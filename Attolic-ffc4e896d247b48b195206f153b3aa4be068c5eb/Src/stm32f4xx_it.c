@@ -285,10 +285,10 @@ void TIM3_IRQHandler(void)
 		actualVel=0;
 	}
 	if(periodos[actualVel]<0){
-		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_SET);
 	}
 	else{
-		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_RESET);
 	}
 	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
 	//sprintf(info, "velAct: %d\n",periodos[actualVel]);

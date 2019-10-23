@@ -107,7 +107,7 @@ int posActual=0;
 int posMax=0;
 int posHome=0;
 int posCentral=0;
-float velHoming=0;
+float velHoming=100;
 
 volatile int velocidades[1000];
 volatile int velocidadesPulsos[1000];
@@ -586,7 +586,7 @@ void homing(){
     if(estado==4){
     	if (posActual>posHome){
     		HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
-    		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+    		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
     	}
     	if (posActual<posHome){
     		HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
@@ -623,9 +623,9 @@ void sin_wave(int A,int F){
 
 }
 	while(estado!=5){
-	TIM4->CNT=0;
+		/*TIM4->CNT=0;
 		TIM4->ARR=(uint)abs(periodos[0]);
-		TIM4->CCR1=(uint)(abs((periodos[0]/2)));
+		TIM4->CCR1=(uint)(abs((periodos[0]/2)));*/
 	}
 	HAL_TIM_Base_Start_IT(&htim3);
 	//HAL_TIM_Base_Start_IT(&htim4);

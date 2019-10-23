@@ -252,23 +252,22 @@ void EXTI9_5_IRQHandler(void)
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-  if(estado=0 || estado==1){
   if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9) == GPIO_PIN_SET){
+  if((estado==0) || (estado==1)){
   posActual=0;
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
   HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
   HAL_UART_Transmit(&huart2, (uint8_t*)";  FC1  ;", 9, 200);
   estado=1;
   }
-  }
- if(estado==3 || estado==4 || estado==5 || estado==6){
+  if(estado!=0 && estado!=1){
 	  		estado=0;
 	  		HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
 	 		  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
 	  }
 
   /* USER CODE END EXTI9_5_IRQn 1 */
-}
+}}
 
 /**
   * @brief This function handles TIM3 global interrupt.
@@ -316,28 +315,26 @@ void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
 
-	char info[50];
+	if (HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_4) == GPIO_PIN_RESET){
+		posActual--;
+	}
+	if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_4) == GPIO_PIN_SET){
+		posActual++;
+	}
 	if ((estado==0) || (estado==1 && posCentral!=posActual) || (estado==3) || (estado==4)){
 		//sprintf(info, "posAct: %d\n",posActual);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
-	if (HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_4) == GPIO_PIN_RESET){
-		posActual++;
+
 	}
-	else if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_4) == GPIO_PIN_SET){
-		posActual--;
-	}
-	}
-	else if (estado==2){
-		if (posCentral==posActual){
+	if ((estado==2) && (posCentral==posActual)){
 		HAL_TIM_Base_Stop_IT(&htim3);
 		HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
-		HAL_TIM_Base_Start_IT(&htim4);
+		HAL_TIM_Base_Stop_IT(&htim4);
 		estado=3;
 		HAL_UART_Transmit(&huart2, (uint8_t*)"home finished\n", 14, 200);
 		//HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
 		}
-	}
-	else if (estado==4){
+	if (estado==4){
 			if (posHome==posActual){
 			HAL_TIM_Base_Stop_IT(&htim3);
 			HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);

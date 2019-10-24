@@ -193,7 +193,7 @@ int main(void)
 		//sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 		//estado=2; para debug comunicación-desarrollo. Saltea homming y fines de carrera.
-	  if ((estado==3 || estado==4 || estado==5)){
+	  if (((estado==3)|| (estado==4) || (estado==5))){
 		  Polling_UART();
 		  //const_vel(100,10);
 	  }
@@ -590,7 +590,7 @@ void homing(){
     	}
     	if (posActual<posHome){
     		HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
-    		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+    		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
     	}
 	}
 }
@@ -622,7 +622,7 @@ void sin_wave(int A,int F){
 		}
 
 }
-	while(estado!=5){
+	while(estado==4){
 		/*TIM4->CNT=0;
 		TIM4->ARR=(uint)abs(periodos[0]);
 		TIM4->CCR1=(uint)(abs((periodos[0]/2)));*/

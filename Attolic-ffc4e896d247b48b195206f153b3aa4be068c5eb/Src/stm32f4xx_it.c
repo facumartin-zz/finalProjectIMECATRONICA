@@ -321,11 +321,6 @@ void TIM4_IRQHandler(void)
 	if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_4) == GPIO_PIN_SET){
 		posActual++;
 	}
-	if ((estado==0) || (estado==1 && posCentral!=posActual) || (estado==3) || (estado==4)){
-		//sprintf(info, "posAct: %d\n",posActual);
-		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
-
-	}
 	if ((estado==2) && (posCentral==posActual)){
 		HAL_TIM_Base_Stop_IT(&htim3);
 		HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
@@ -335,10 +330,10 @@ void TIM4_IRQHandler(void)
 		//HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
 		}
 	if (estado==4){
-			if (posHome==posActual){
+			if (abs(posHome)==abs(posActual)){
 			HAL_TIM_Base_Stop_IT(&htim3);
 			HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
-			HAL_TIM_Base_Start_IT(&htim4);
+			HAL_TIM_Base_Stop_IT(&htim4);
 			estado=5;
 			HAL_UART_Transmit(&huart2, (uint8_t*)"home finished\n", 14, 200);
 			//HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);

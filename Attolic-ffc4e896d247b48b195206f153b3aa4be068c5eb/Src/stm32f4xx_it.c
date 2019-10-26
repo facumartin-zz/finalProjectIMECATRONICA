@@ -257,13 +257,13 @@ void EXTI9_5_IRQHandler(void)
   posActual=0;
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
   HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
-  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC1  ;", 9, 200);
+ // HAL_UART_Transmit(&huart2, (uint8_t*)";  FC1  ;", 9, 200);
   estado=1;
   }
   if(estado!=0 && estado!=1){
 	  		estado=0;
-	  		HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
-	 		  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
+	  		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+	 	//	  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
 	  }
 
   /* USER CODE END EXTI9_5_IRQn 1 */
@@ -284,10 +284,10 @@ void TIM3_IRQHandler(void)
 		actualVel=0;
 	}
 	if(periodos[actualVel]<0){
-		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_RESET);
 	}
 	else{
-		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_4, GPIO_PIN_SET);
 	}
 	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
 	//sprintf(info, "velAct: %d\n",periodos[actualVel]);
@@ -330,13 +330,17 @@ void TIM4_IRQHandler(void)
 		//HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
 		}
 	if (estado==4){
-			if (abs(posHome)==abs(posActual)){
+		if (posHome == posActual){
 			HAL_TIM_Base_Stop_IT(&htim3);
 			HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
 			HAL_TIM_Base_Stop_IT(&htim4);
 			estado=5;
+			actualVel=0;
+			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
+			HAL_TIM_Base_Start_IT(&htim3);
+			HAL_TIM_Base_Start_IT(&htim4);
+			HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 			HAL_UART_Transmit(&huart2, (uint8_t*)"home finished\n", 14, 200);
-			//HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
 			}
 		}
 	HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_15);
@@ -406,12 +410,13 @@ void EXTI15_10_IRQHandler(void)
 		  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
 		  HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_14);
 		  estado=2;
-		  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
+	//	  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
 	  }
 	 if(estado==3 || estado==4 || estado==5 || estado==6){
 	  		estado=0;
-	  		HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
-	 		  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
+		    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+	 		//  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
+
 	 	  }
   }
 

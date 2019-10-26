@@ -130,7 +130,7 @@ uint8_t bufferRX_UART2[50];
   * @retval int
   */
 int main(void)
-{
+	{
   /* USER CODE BEGIN 1 */
 	OK_UART2 = FALSE;
 
@@ -193,7 +193,7 @@ int main(void)
 		//sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 		//estado=2; para debug comunicación-desarrollo. Saltea homming y fines de carrera.
-	  if (((estado==3)|| (estado==4) || (estado==5))){
+	  if (((estado==0 || estado==3)|| (estado==4) || (estado==5))){
 		  Polling_UART();
 		  //const_vel(100,10);
 	  }
@@ -572,39 +572,42 @@ void homing(){
 	TIM4->ARR=periodo;       //desborde de tiempo de pwm en timer 4.
 	compareMatch=(int)(periodo/2);
     __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,compareMatch); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
-    if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9)==GPIO_PIN_SET){
-    estado=1;
-	posActual=0;
-	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+    	if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9)==GPIO_PIN_SET){
+			estado=1;
+			posActual=0;
+			HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
     }
-    if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13)==GPIO_PIN_SET){
-	estado=0;
-	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+    	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13)==GPIO_PIN_SET){
+			estado=0;
+			HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
 	}
-    if(estado==4){
-    	if (posActual>posHome){
-    		HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
-    		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
-    	}
-    	if (posActual<posHome){
-    		HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
-    		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
-    	}
-	}
+		if(estado==4){
+			HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
+			HAL_TIM_Base_Stop_IT(&htim4);
+			HAL_TIM_Base_Stop_IT(&htim3);
+			if (posActual>posHome){
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+			} else if (posActual<posHome){
+				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+			}
+			HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
+		}
+
 }
 
 void sin_wave(int A,int F){
 	//y = 3 * sin((float)x / 10); oscilating between 3 and -3 period 20pi.
 	//const float CICLE=(3.14*2)/110;
 	char info[50];
-	posHome=posCentral-(double)(A/2*pulsosporRevolucion/mmporRevolucion);
-	estado=4;
-	homing();
+	HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
+	posHome=posCentral-(double)((double)A/2.0*(double)pulsosporRevolucion/(double)mmporRevolucion);
 	double deltaT=(htim3_Prescaler*(htim3_Period+1))/clock;  //porque tiene que cambiar al cuarto
 	//float period=0.01;
-	sprintf(info, "senoidal,Amplitud:%d ,Frecuencia: %d\n",A,F);
+	//sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n",A,F);
+	sprintf(info, "sin OK\n");
 	HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	for (int i=0;i<1000;i++){
 		velocidades[i]=(int)(A*2*M_PI*F*sin((2*M_PI*F*i*deltaT)));
@@ -622,14 +625,16 @@ void sin_wave(int A,int F){
 		}
 
 }
-	while(estado==4){
+	estado=4;
+	homing();
+	//while(estado==4){
 		/*TIM4->CNT=0;
 		TIM4->ARR=(uint)abs(periodos[0]);
 		TIM4->CCR1=(uint)(abs((periodos[0]/2)));*/
-	}
-	HAL_TIM_Base_Start_IT(&htim3);
+//	}
+//	HAL_TIM_Base_Start_IT(&htim3);
 	//HAL_TIM_Base_Start_IT(&htim4);
-	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
+//	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 }
 
 
@@ -691,6 +696,7 @@ void Polling_UART() {
 									HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 								}
 			else if(rx_data_UART[1]=='h'){
+									homing();
 									estado=0;
 											}
 			else if(rx_data_UART[1]=='v'){

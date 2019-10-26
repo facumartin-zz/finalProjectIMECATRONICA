@@ -573,6 +573,7 @@ void homing(){
 	compareMatch=(int)(periodo/2);
     __HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,compareMatch); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
     	if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9)==GPIO_PIN_SET){
 			estado=1;
 			posActual=0;

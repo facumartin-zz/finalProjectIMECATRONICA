@@ -189,7 +189,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  estado=0;
+	  //estado=0;
 		//char info[50];
 		//sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
@@ -628,8 +628,8 @@ void sin_wave(int A,int F){
 
 }
 
-	//estado=4;
-	//homing();
+	estado=4;
+	homing();
 	//while(estado==4){
 		/*TIM4->CNT=0;
 		TIM4->ARR=(uint)abs(periodos[0]);

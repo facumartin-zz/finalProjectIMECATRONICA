@@ -119,7 +119,7 @@ volatile int periodos[1000];
 uint8_t rx_index_UART2;
 _Bool OK_UART2;
 
-
+uint8_t rx_data_UART[13];
 uint8_t rx_buffer_UART2[50];
 char bufferTX_UART2[20];
 uint8_t bufferRX_UART2[50];
@@ -189,6 +189,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  estado=0;
 		//char info[50];
 		//sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
@@ -626,8 +627,9 @@ void sin_wave(int A,int F){
 		}
 
 }
-	estado=4;
-	homing();
+
+	//estado=4;
+	//homing();
 	//while(estado==4){
 		/*TIM4->CNT=0;
 		TIM4->ARR=(uint)abs(periodos[0]);
@@ -663,12 +665,11 @@ void const_vel(int A,int F){
 void Polling_UART() {
 	int Frecuencia;
 	int Amplitud;
-	uint8_t rx_data_UART[13];
 	if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == SET) { // preguntar por byte disponible en buffer
-		HAL_UART_Receive(&huart2, rx_data_UART, 13, HAL_MAX_DELAY); // leer 1 byte
+		//HAL_UART_Receive(&huart2, rx_data_UART, 13, HAL_MAX_DELAY);
+		HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
 		if (rx_data_UART[0] == ':') {
-			HAL_UART_Transmit(&huart2, (uint8_t*) rx_data_UART, 13, HAL_MAX_DELAY);
-
+			//HAL_UART_Transmit(&huart2, (uint8_t*) rx_data_UART, 13, HAL_MAX_DELAY);// índice de buffers
 			if (rx_data_UART[1]=='t'){ // En este switch solo observo el segundo byte
 						/*Frecuencia=((int)(rx_data_UART[2]-'0'))*100+((int)(rx_data_UART[3]-'0'))*10+(int)(rx_data_UART[4]-'0');
 						Amplitud=((int)(rx_data_UART[5]-'0'))*100+((int)(rx_data_UART[6]-'0'))*10+(int)(rx_data_UART[7]-'0');
@@ -716,10 +717,11 @@ void Polling_UART() {
 
 		}
 	}
+
 	if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_ORE) == SET) {
 		__HAL_UART_CLEAR_OREFLAG(&huart2);
 	}
-
+	__HAL_UART_FLUSH_DRREGISTER(&huart2);
 }
 
 

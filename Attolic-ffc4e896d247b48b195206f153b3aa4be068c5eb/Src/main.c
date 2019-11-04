@@ -103,17 +103,18 @@ int const pulsosporRevolucion = 5000;
 int const mmporRevolucion = 10;
 
 int estado = 0;
-int posActual = 0;
-int posMax = 0;
-int posHome = 0;
-int posCentral = 0;
+double posActual = 0;
+double posMax = 0;
+double posHome = 0;
+double posCentral = 0;
 float velHoming = 100;
+int actualVel = 0;
 
 volatile int velocidades[1000];
 volatile int velocidadesPulsos[1000];
 volatile int posiciones[1000];
 volatile int posicionesPulsos[1000];
-volatile int posicionesActPulsos[1000];
+volatile double posicionesActPulsos[5000];
 volatile int periodos[1000];
 // variables para comunicacion UART2
 uint8_t rx_index_UART2;
@@ -582,6 +583,7 @@ void homing() {
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
 		} else if (posActual == posHome) {
 			estado = 5;
+			actualVel=0;
 			actualVel = 0;
 			//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
 			HAL_TIM_Base_Start_IT(&htim3);

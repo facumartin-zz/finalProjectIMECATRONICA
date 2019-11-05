@@ -76,7 +76,8 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
-
+extern _Bool FC_der();
+extern _Bool FC_izq();
 extern int periodos[1001];
 int periodosreales[1001];
 extern int posicionesPulsos[1001];
@@ -87,7 +88,7 @@ extern int posCentral;
 extern int posHome;
 extern int estado;
 extern int posMax;
-int actualVel=0;
+int volatile actualVel=0;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -252,7 +253,7 @@ void EXTI9_5_IRQHandler(void)
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-  if(HAL_GPIO_ReadPin(GPIOD,GPIO_PIN_9) == GPIO_PIN_SET){
+  if(FC_der()){
   if((estado==0) || (estado==1)){
   posActual=0;
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
@@ -279,7 +280,6 @@ void TIM3_IRQHandler(void)
 	//sprintf(info, "posAct: %d\n",posActual);
 	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 	if(estado==5){
-	int static actualVel=0;
 	if (actualVel>999){
 		actualVel=0;
 	}
@@ -331,15 +331,8 @@ void TIM4_IRQHandler(void)
 		}
 	if (estado==4){
 		if (posHome == posActual){
-			HAL_TIM_Base_Stop_IT(&htim3);
-			HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
-			HAL_TIM_Base_Stop_IT(&htim4);
-			estado=5;
 			actualVel=0;
-			HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_RESET);
-			HAL_TIM_Base_Start_IT(&htim3);
-			HAL_TIM_Base_Start_IT(&htim4);
-			HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
+			estado=5;
 			HAL_UART_Transmit(&huart2, (uint8_t*)"home finished\n", 14, 200);
 			}
 		}
@@ -403,7 +396,7 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-  if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_13) == GPIO_PIN_SET){
+  if(FC_izq()){
 	 if(estado==1){
 		  posMax=posActual;
 		  posCentral=posMax/2;

@@ -103,17 +103,26 @@ int const pulsosporRevolucion = 5000;
 int const mmporRevolucion = 10;
 
 int estado = 0;
+<<<<<<< HEAD
 int posActual = 0;
 int posMax = 0;
 int posHome = 0;
 int posCentral = 0;
 float velHoming = 100;
+=======
+double posActual = 0;
+double posMax = 0;
+double posHome = 0;
+double posCentral = 0;
+float velHoming = 100;
+int actualVel = 0;
+>>>>>>> FuncionandoOK
 
 volatile int velocidades[1000];
 volatile int velocidadesPulsos[1000];
 volatile int posiciones[1000];
 volatile int posicionesPulsos[1000];
-volatile int posicionesActPulsos[1000];
+volatile double posicionesActPulsos[5000];
 volatile int periodos[1000];
 // variables para comunicacion UART2
 uint8_t rx_index_UART2;
@@ -451,7 +460,12 @@ static void MX_GPIO_Init(void) {
 
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(GPIOD,
+<<<<<<< HEAD
 	GPIO_PIN_14 | GPIO_PIN_15 | GPIO_PIN_3 | GPIO_PIN_7, GPIO_PIN_RESET);
+=======
+			GPIO_PIN_14 | GPIO_PIN_15 | GPIO_PIN_3 | GPIO_PIN_7,
+			GPIO_PIN_RESET);
+>>>>>>> FuncionandoOK
 
 	/*Configure GPIO pins : PC0 PC2 PC4 */
 	GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_2 | GPIO_PIN_4;
@@ -567,6 +581,7 @@ void homing() {
 		posActual = 0;
 		HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+<<<<<<< HEAD
 	}
 	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_SET) {
 		estado = 0;
@@ -574,6 +589,13 @@ void homing() {
 		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
 	}
 	if (estado == 4) {
+=======
+	} else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_SET) {
+		estado = 0;
+		HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+	} else if (estado == 4) {
+>>>>>>> FuncionandoOK
 		HAL_TIM_PWM_Stop_IT(&htim4, TIM_CHANNEL_1);
 		HAL_TIM_Base_Stop_IT(&htim4);
 		HAL_TIM_Base_Stop_IT(&htim3);
@@ -581,16 +603,32 @@ void homing() {
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
 		} else if (posActual < posHome) {
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
+<<<<<<< HEAD
 		}
 		HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
 	}
 
+=======
+		} else if (posActual == posHome) {
+			estado = 5;
+			actualVel=0;
+			actualVel = 0;
+			//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+			HAL_TIM_Base_Start_IT(&htim3);
+			HAL_TIM_Base_Start_IT(&htim4);
+			HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
+		}
+		HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
+		HAL_TIM_Base_Start_IT(&htim4);
+	}
+>>>>>>> FuncionandoOK
 }
 
 void sin_wave(int A, int F) {
 	//y = 3 * sin((float)x / 10); oscilating between 3 and -3 period 20pi.
 	//const float CICLE=(3.14*2)/110;
 	char info[50];
+<<<<<<< HEAD
 	//HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
 	int velocidad = 0;
 	int periodo = 0;
@@ -599,6 +637,16 @@ void sin_wave(int A, int F) {
 	//float period=0.01;
 	sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n",A,F);
 	//sprintf(info, "sin OK\n");
+=======
+	HAL_TIM_PWM_Stop_IT(&htim4, TIM_CHANNEL_1);
+	posHome = posCentral
+			- (double) ((double) A / 2.0 * (double) pulsosporRevolucion
+					/ (double) mmporRevolucion);
+	double deltaT = (htim3_Prescaler * (htim3_Period + 1)) / clock; //porque tiene que cambiar al cuarto
+	//float period=0.01;
+	//sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n",A,F);
+	sprintf(info, "sin OK\n");
+>>>>>>> FuncionandoOK
 	HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
 	for (int i = 0; i < 1000; i++) {
 		velocidades[i] = (int) (A * 2 * M_PI * F
@@ -619,6 +667,7 @@ void sin_wave(int A, int F) {
 		}
 
 	}
+<<<<<<< HEAD
 	posHome = posCentral
 			- (double) ((double) A / 2.0 * (double) pulsosporRevolucion
 					/ (double) mmporRevolucion);
@@ -642,6 +691,11 @@ void sin_wave(int A, int F) {
 	HAL_TIM_Base_Start_IT(&htim4);
 	HAL_TIM_Base_Start_IT(&htim3);
 	//homing();
+=======
+
+	estado = 4;
+	homing();
+>>>>>>> FuncionandoOK
 	//while(estado==4){
 	/*TIM4->CNT=0;
 	 TIM4->ARR=(uint)abs(periodos[0]);
@@ -747,6 +801,7 @@ void Polling_UART() {
 	__HAL_UART_FLUSH_DRREGISTER(&huart2);
 }
 
+<<<<<<< HEAD
 _Bool FC_der() {
 	return HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_9);
 }
@@ -768,6 +823,8 @@ _Bool leer_direccion() {
 	return HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);
 }
 
+=======
+>>>>>>> FuncionandoOK
 /* USER CODE END 4 */
 
 /**

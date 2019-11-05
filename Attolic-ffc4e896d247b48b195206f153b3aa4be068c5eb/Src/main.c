@@ -590,16 +590,18 @@ void homing() {
 void sin_wave(int A, int F) {
 	//y = 3 * sin((float)x / 10); oscilating between 3 and -3 period 20pi.
 	//const float CICLE=(3.14*2)/110;
-	char info[50];
+	char info[20];
 	//HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
 	int velocidad = 0;
 	int periodo = 0;
 	int compareMatch = 0;
 	double deltaT = (htim3_Prescaler * (htim3_Period + 1)) / clock; //porque tiene que cambiar al cuarto
+
+
 	//float period=0.01;
-	sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n",A,F);
+	//sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n",A,F);
 	//sprintf(info, "sin OK\n");
-	HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
+	//HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
 	for (int i = 0; i < 1000; i++) {
 		velocidades[i] = (int) (A * 2 * M_PI * F
 				* sin((2 * M_PI * F * i * deltaT)));
@@ -680,6 +682,7 @@ void Polling_UART() {
 	if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == SET) { // preguntar por byte disponible en buffer
 		//HAL_UART_Receive(&huart2, rx_data_UART, 13, HAL_MAX_DELAY);
 		HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
+		__HAL_UART_FLUSH_DRREGISTER(&huart2);
 		if (rx_data_UART[0] == ':') {
 			//HAL_UART_Transmit(&huart2, (uint8_t*) rx_data_UART, 13, HAL_MAX_DELAY);// índice de buffers
 			if (rx_data_UART[1] == 't') { // En este switch solo observo el segundo byte
@@ -744,7 +747,8 @@ void Polling_UART() {
 	if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_ORE) == SET) {
 		__HAL_UART_CLEAR_OREFLAG(&huart2);
 	}
-	__HAL_UART_FLUSH_DRREGISTER(&huart2);
+
+
 }
 
 _Bool FC_der() {

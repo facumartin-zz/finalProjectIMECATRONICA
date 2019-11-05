@@ -266,9 +266,10 @@ void EXTI9_5_IRQHandler(void)
 	  		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
 	 	//	  HAL_UART_Transmit(&huart2, (uint8_t*)";  FC2  ;", 9, 200);
 	  }
-
+  }
   /* USER CODE END EXTI9_5_IRQn 1 */
-}}
+}
+
 
 /**
   * @brief This function handles TIM3 global interrupt.

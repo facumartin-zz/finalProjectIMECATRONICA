@@ -89,7 +89,8 @@ static void MX_I2C2_Init(void);
 void triangle_wave(int freq, int min, int max);
 void sin_wave(int A, int F);
 void const_vel(int A, int F);
-void Polling_UART();
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -113,7 +114,7 @@ volatile int velocidades[1000];
 volatile int velocidadesPulsos[1000];
 volatile int posiciones[1000];
 volatile int posicionesPulsos[1000];
-volatile int posicionesActPulsos[1000];
+volatile int posicionesActPulsos[15000];
 volatile int periodos[1000];
 // variables para comunicacion UART2
 uint8_t rx_index_UART2;
@@ -178,6 +179,7 @@ int main(void)
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET);
 	TIM4->ARR = 200;       //desborde de tiempo de pwm en timer 4.
 	__HAL_TIM_SetCompare(&htim4,TIM_CHANNEL_1,100); //match de comparación en timer 4, siempre tiene que ser la mitad de ARR.
+	HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
 
 	// estado=2; //forzado
 	//sin_wave(100,1);
@@ -187,13 +189,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
+		HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
 		//estado=0;
 		//char info[50];
 		//sprintf(info, "estado: %d \n",estado);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 		//estado=2; para debug comunicación-desarrollo. Saltea homming y fines de carrera.
 		if (((estado == 0 || estado == 3) || (estado == 4) || (estado == 5))) {
-			Polling_UART();
+			//Polling_UART();
 			//const_vel(100,10);
 		}
 		if ((estado == 3 || estado == 4 || estado == 5)
@@ -303,9 +306,9 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 16000;
+  htim3.Init.Prescaler = htim3_Prescaler;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 1000;
+  htim3.Init.Period = htim3_Period;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
@@ -360,9 +363,9 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 1 */
   htim4.Instance = TIM4;
-  htim4.Init.Prescaler = 24;
+  htim4.Init.Prescaler = htim4_Prescaler;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 200;
+  htim4.Init.Period = htim4_Period;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
   {
@@ -611,9 +614,9 @@ void sin_wave(int A, int F) {
 
 
 	//float period=0.01;
-	//sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n",A,F);
+	sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n",A,F);
 	//sprintf(info, "sin OK\n");
-	//HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
+	HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
 	for (int i = 0; i < 1000; i++) {
 		velocidades[i] = (int) (A * 2 * M_PI * F
 				* sin((2 * M_PI * F * i * deltaT)));
@@ -687,12 +690,12 @@ void const_vel(int A, int F) {
 	HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
 }
 
-// Lectura de la uart
-void Polling_UART() {
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	int Frecuencia;
 	int Amplitud;
-	if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == SET) { // preguntar por byte disponible en buffer
-		HAL_UART_Receive(&huart2, rx_data_UART, 13, HAL_MAX_DELAY);
+	//if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == SET) { // preguntar por byte disponible en buffer
+		//HAL_UART_Receive(&huart2, rx_data_UART, 13, 1000);
 		//HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
 
 		if (rx_data_UART[0] == ':') {
@@ -754,11 +757,9 @@ void Polling_UART() {
 			//procesarUart(huart2, rx_data_UART, 0);
 
 		}
-	}
-	__HAL_UART_FLUSH_DRREGISTER(&huart2);
-	if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_ORE) == SET) {
-		__HAL_UART_CLEAR_OREFLAG(&huart2);
-	}
+
+	//__HAL_UART_FLUSH_DRREGISTER(&huart2);
+	//HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
 
 
 }

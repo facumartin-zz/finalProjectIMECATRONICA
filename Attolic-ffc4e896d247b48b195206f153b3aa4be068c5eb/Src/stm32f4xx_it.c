@@ -81,7 +81,7 @@ extern _Bool FC_izq();
 extern int periodos[1001];
 int periodosreales[1001];
 extern int posicionesPulsos[1001];
-extern int posicionesActPulsos[1001];
+extern int posicionesActPulsos[15000];
 char buf[16];
 extern int posActual;
 extern int posCentral;
@@ -278,8 +278,14 @@ void TIM3_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM3_IRQn 0 */
 	char info[50];
+	static int i=0;
 	//sprintf(info, "posAct: %d\n",posActual);
 	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
+	posicionesActPulsos[i]=posActual;
+	if (i>14999){
+		i=0;
+	}
+	i++;
 	if(estado==5){
 	if (actualVel>999){
 		actualVel=0;

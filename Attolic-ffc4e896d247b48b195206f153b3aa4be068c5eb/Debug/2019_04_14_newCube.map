@@ -2004,7 +2004,7 @@ OUTPUT(2019_04_14_newCube.elf elf32-littlearm)
  .debug_ranges  0x00000fe8       0x18 Src\system_stm32f4xx.o
  .debug_ranges  0x00001000       0x20 startup\startup_stm32f407xx.o
 
-.debug_line     0x00000000     0x6856
+.debug_line     0x00000000     0x6858
  .debug_line    0x00000000      0x492 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o
  .debug_line    0x00000492      0x4dc Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.o
  .debug_line    0x0000096e      0x5f7 Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.o
@@ -2014,11 +2014,11 @@ OUTPUT(2019_04_14_newCube.elf elf32-littlearm)
  .debug_line    0x000031f1     0x117f Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.o
  .debug_line    0x00004370      0x6cb Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim_ex.o
  .debug_line    0x00004a3b      0xbef Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.o
- .debug_line    0x0000562a      0x6ed Src\main.o
- .debug_line    0x00005d17      0x402 Src\stm32f4xx_hal_msp.o
- .debug_line    0x00006119      0x449 Src\stm32f4xx_it.o
- .debug_line    0x00006562      0x275 Src\system_stm32f4xx.o
- .debug_line    0x000067d7       0x7f startup\startup_stm32f407xx.o
+ .debug_line    0x0000562a      0x6ef Src\main.o
+ .debug_line    0x00005d19      0x402 Src\stm32f4xx_hal_msp.o
+ .debug_line    0x0000611b      0x449 Src\stm32f4xx_it.o
+ .debug_line    0x00006564      0x275 Src\system_stm32f4xx.o
+ .debug_line    0x000067d9       0x7f startup\startup_stm32f407xx.o
 
 .debug_str      0x00000000     0x4704
  .debug_str     0x00000000      0xf5b Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.o

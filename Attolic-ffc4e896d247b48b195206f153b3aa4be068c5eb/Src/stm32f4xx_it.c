@@ -263,14 +263,6 @@ void TIM3_IRQHandler(void) {
 	/* USER CODE BEGIN TIM3_IRQn 0 */
 	char info[50];
 	static int i = 0;
-	//sprintf(info, "posAct: %d\n",posActual);
-	//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
-	/*posicionesActPulsos[i] = posActual;
-	if (i > 14999) {
-		i = 0;
-	}
-	i++;
-	*/
 	if (estado == 5) {
 		if (actualVel > (maxIndex-1)) {
 			actualVel = 0;

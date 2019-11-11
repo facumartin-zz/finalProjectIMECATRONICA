@@ -25,23 +25,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  10 .ARM.attributes 00000030  00000000  00000000  00020074  2**0
                   CONTENTS, READONLY
- 11 .debug_info   000178e3  00000000  00000000  000200a4  2**0
+ 11 .debug_info   000178e2  00000000  00000000  000200a4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_abbrev 0000295c  00000000  00000000  00037987  2**0
+ 12 .debug_abbrev 0000296b  00000000  00000000  00037986  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_loc    00009477  00000000  00000000  0003a2e3  2**0
+ 13 .debug_loc    00009477  00000000  00000000  0003a2f1  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_aranges 00000ac8  00000000  00000000  00043760  2**3
+ 14 .debug_aranges 00000ac8  00000000  00000000  00043768  2**3
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_ranges 00001030  00000000  00000000  00044228  2**3
+ 15 .debug_ranges 00001030  00000000  00000000  00044230  2**3
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_line   000068a3  00000000  00000000  00045258  2**0
+ 16 .debug_line   00006893  00000000  00000000  00045260  2**0
                   CONTENTS, READONLY, DEBUGGING
- 17 .debug_str    0000470d  00000000  00000000  0004bafb  2**0
+ 17 .debug_str    0000470d  00000000  00000000  0004baf3  2**0
                   CONTENTS, READONLY, DEBUGGING
- 18 .comment      0000007c  00000000  00000000  00050208  2**0
+ 18 .comment      0000007c  00000000  00000000  00050200  2**0
                   CONTENTS, READONLY
- 19 .debug_frame  00002914  00000000  00000000  00050284  2**2
+ 19 .debug_frame  00002914  00000000  00000000  0005027c  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -7071,7 +7071,7 @@ int main(void) {
  8003288:	4653      	mov	r3, sl
  800328a:	2203      	movs	r2, #3
  800328c:	4921      	ldr	r1, [pc, #132]	; (8003314 <main+0x324>)
-		if (((estado == 0 || estado == 3) || (estado == 4) || (estado == 5))) {
+		if ((estado == 3 || estado == 4 || estado == 5)
  800328e:	4c22      	ldr	r4, [pc, #136]	; (8003318 <main+0x328>)
 	HAL_UART_Transmit(&huart2, "OK ", 3, 200);
  8003290:	4630      	mov	r0, r6
@@ -7102,7 +7102,7 @@ int main(void) {
 	HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
  80032bc:	f7ff fd53 	bl	8002d66 <HAL_UART_Receive_IT>
  80032c0:	4625      	mov	r5, r4
-		HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
+		HAL_UART_Receive_IT(&huart2, rx_data_UART, 13);
  80032c2:	4f16      	ldr	r7, [pc, #88]	; (800331c <main+0x32c>)
  80032c4:	480f      	ldr	r0, [pc, #60]	; (8003304 <main+0x314>)
  80032c6:	220d      	movs	r2, #13
@@ -7293,7 +7293,6 @@ void homing() {
  800343a:	2100      	movs	r1, #0
  800343c:	4808      	ldr	r0, [pc, #32]	; (8003460 <homing+0x100>)
 	}
-
 }
  800343e:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
 		HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
@@ -7325,15 +7324,13 @@ void homing() {
 void sin_wave(int A, int F) {
  8003488:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
 	char info[20];
-	//HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
 	int velocidad = 0;
 	int periodo = 0;
 	int compareMatch = 0;
 	maxIndex=1/1*1000;
  800348c:	4c8e      	ldr	r4, [pc, #568]	; (80036c8 <sin_wave+0x240>)
-	//float period=0.01;
+	double deltaT = (htim3_Prescaler * (htim3_Period + 1)) / clock; //porque tiene que cambiar al cuarto
 	sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n", A, F);
-	//sprintf(info, "sin OK\n");
 	HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
 	for (int i = 0; i < maxIndex; i++) {
 		velocidades[i] = (int) (A * 2 * M_PI * F
@@ -7372,7 +7369,6 @@ void sin_wave(int A, int F) {
 	for (int i = 0; i < maxIndex; i++) {
  80034c2:	2400      	movs	r4, #0
 				* sin((2 * M_PI * F * i * deltaT)));
-		//posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
 		velocidadesPulsos[i] = (int) (velocidades[i] * pulsosporRevolucion
  80034c4:	f44f 7bfa 	mov.w	fp, #500	; 0x1f4
 	for (int i = 0; i < maxIndex; i++) {
@@ -7497,15 +7493,9 @@ void sin_wave(int A, int F) {
  8003594:	2100      	movs	r1, #0
  8003596:	485a      	ldr	r0, [pc, #360]	; (8003700 <sin_wave+0x278>)
  8003598:	f7ff f95e 	bl	8002858 <HAL_TIM_PWM_Start_IT>
-	//HAL_TIM_Base_Start_IT(&htim4);
 	HAL_TIM_Base_Start_IT(&htim3);
  800359c:	485c      	ldr	r0, [pc, #368]	; (8003710 <sin_wave+0x288>)
  800359e:	f7fe fe5b 	bl	8002258 <HAL_TIM_Base_Start_IT>
-	 TIM4->CCR1=(uint)(abs((periodos[0]/2)));*/
-//	}
-//	HAL_TIM_Base_Start_IT(&htim3);
-	//HAL_TIM_Base_Start_IT(&htim4);
-//	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 }
  80035a2:	b00d      	add	sp, #52	; 0x34
  80035a4:	e8bd 8ff0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, pc}
@@ -7761,11 +7751,8 @@ void const_vel(int A, int F) {
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
  80037e4:	b5f0      	push	{r4, r5, r6, r7, lr}
+	int Frecuencia;
 	int Amplitud;
-	//if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == SET) { // preguntar por byte disponible en buffer
-	//HAL_UART_Receive(&huart2, rx_data_UART, 13, 1000);
-	//HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
-
 	if (rx_data_UART[0] == ':') {
  80037e6:	4c55      	ldr	r4, [pc, #340]	; (800393c <HAL_UART_RxCpltCallback+0x158>)
  80037e8:	7823      	ldrb	r3, [r4, #0]
@@ -7774,16 +7761,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
  80037ec:	b08f      	sub	sp, #60	; 0x3c
 	if (rx_data_UART[0] == ':') {
  80037ee:	d129      	bne.n	8003844 <HAL_UART_RxCpltCallback+0x60>
-		//HAL_UART_Transmit(&huart2, (uint8_t*) rx_data_UART, 13, HAL_MAX_DELAY);// índice de buffers
 		if (rx_data_UART[1] == 't') { // En este switch solo observo el segundo byte
  80037f0:	7863      	ldrb	r3, [r4, #1]
  80037f2:	2b74      	cmp	r3, #116	; 0x74
  80037f4:	d026      	beq.n	8003844 <HAL_UART_RxCpltCallback+0x60>
-			 Amplitud=((int)(rx_data_UART[8]-'0'))*100+((int)(rx_data_UART[9]-'0'))*10+(int)(rx_data_UART[10]-'0');
-			 char info[50];
-			 sprintf(info, "Triangular, freq: %d, min: %d, max: %d \n",freq, min, max);
-			 triangle_wave(freq,min,max);
-			 HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);*/
 		} else if (rx_data_UART[1] == 's') {
  80037f6:	2b73      	cmp	r3, #115	; 0x73
  80037f8:	d126      	bne.n	8003848 <HAL_UART_RxCpltCallback+0x64>
@@ -7838,18 +7819,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
  8003838:	3930      	subs	r1, #48	; 0x30
 					+ ((int) (rx_data_UART[6] - '0'));
  800383a:	3830      	subs	r0, #48	; 0x30
-			//max=((int)(rx_data_UART[8]-'0'))*100+((int)(rx_data_UART[9]-'0'))*10+(int)(rx_data_UART[10]-'0');
-			//char info[50];
-			//sprintf(info, "Senoidal,vel:%d ,freq: %d\n",vel, freq);
 			sin_wave(Amplitud, Frecuencia);
  800383c:	4411      	add	r1, r2
  800383e:	4418      	add	r0, r3
  8003840:	f7ff fe22 	bl	8003488 <sin_wave>
+				HAL_UART_Transmit(&huart2, " \n", 2, 200);
+
+			}
+		}
 	}
-
-	//__HAL_UART_FLUSH_DRREGISTER(&huart2);
-	//HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
-
 }
  8003844:	b00f      	add	sp, #60	; 0x3c
  8003846:	bdf0      	pop	{r4, r5, r6, r7, pc}
@@ -8640,11 +8618,9 @@ void EXTI9_5_IRQHandler(void) {
  */
 void TIM3_IRQHandler(void) {
  8003c74:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
-	if (i > 14999) {
-		i = 0;
-	}
-	i++;
-	*/
+	/* USER CODE BEGIN TIM3_IRQn 0 */
+	char info[50];
+	static int i = 0;
 	if (estado == 5) {
  8003c76:	4b24      	ldr	r3, [pc, #144]	; (8003d08 <TIM3_IRQHandler+0x94>)
  8003c78:	681b      	ldr	r3, [r3, #0]

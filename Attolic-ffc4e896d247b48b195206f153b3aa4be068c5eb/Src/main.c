@@ -162,11 +162,7 @@ int main(void) {
 	MX_I2C2_Init();
 	/* USER CODE BEGIN 2 */
 	HAL_TIM_Base_Start_IT(&htim3);
-	//HAL_TIM_Base_Start(&htim3);
-	//HAL_TIM_Base_Start_IT(&htim4);
-	//HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
-	//HAL_TIM_Base_Start_IT(&htim3);
 
 	char buffer[16];
 	char txbuffer[10];
@@ -182,23 +178,14 @@ int main(void) {
 	HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
 
 	// estado=2; //forzado
-	//sin_wave(100,1);
-	//const_vel(100,1);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
-		//estado=0;
-		//char info[50];
-		//sprintf(info, "estado: %d \n",estado);
-		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
+		HAL_UART_Receive_IT(&huart2, rx_data_UART, 13);
 		//estado=2; para debug comunicación-desarrollo. Saltea homming y fines de carrera.
-		if (((estado == 0 || estado == 3) || (estado == 4) || (estado == 5))) {
-			//Polling_UART();
-			//const_vel(100,10);
-		}
+
 		if ((estado == 3 || estado == 4 || estado == 5)
 				&& ((HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_9) == GPIO_PIN_SET)
 						|| (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13) == GPIO_PIN_SET))) {
@@ -588,28 +575,20 @@ void homing() {
 		}
 		HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
 	}
-
 }
 
 void sin_wave(int A, int F) {
-	//y = 3 * sin((float)x / 10); oscilating between 3 and -3 period 20pi.
-	//const float CICLE=(3.14*2)/110;
 	char info[20];
-	//HAL_TIM_PWM_Stop_IT(&htim4,TIM_CHANNEL_1);
 	int velocidad = 0;
 	int periodo = 0;
 	int compareMatch = 0;
 	maxIndex=1/1*1000;
 	double deltaT = (htim3_Prescaler * (htim3_Period + 1)) / clock; //porque tiene que cambiar al cuarto
-
-	//float period=0.01;
 	sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n", A, F);
-	//sprintf(info, "sin OK\n");
 	HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
 	for (int i = 0; i < maxIndex; i++) {
 		velocidades[i] = (int) (A * 2 * M_PI * F
 				* sin((2 * M_PI * F * i * deltaT)));
-		//posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
 		velocidadesPulsos[i] = (int) (velocidades[i] * pulsosporRevolucion
 				/ mmporRevolucion);
 
@@ -645,17 +624,7 @@ void sin_wave(int A, int F) {
 	}
 
 	HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
-	//HAL_TIM_Base_Start_IT(&htim4);
 	HAL_TIM_Base_Start_IT(&htim3);
-	//homing();
-	//while(estado==4){
-	/*TIM4->CNT=0;
-	 TIM4->ARR=(uint)abs(periodos[0]);
-	 TIM4->CCR1=(uint)(abs((periodos[0]/2)));*/
-//	}
-//	HAL_TIM_Base_Start_IT(&htim3);
-	//HAL_TIM_Base_Start_IT(&htim4);
-//	HAL_TIM_PWM_Start_IT(&htim4,TIM_CHANNEL_1);
 }
 
 void const_vel(int A, int F) {
@@ -682,20 +651,8 @@ void const_vel(int A, int F) {
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	int Frecuencia;
 	int Amplitud;
-	//if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE) == SET) { // preguntar por byte disponible en buffer
-	//HAL_UART_Receive(&huart2, rx_data_UART, 13, 1000);
-	//HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
-
 	if (rx_data_UART[0] == ':') {
-		//HAL_UART_Transmit(&huart2, (uint8_t*) rx_data_UART, 13, HAL_MAX_DELAY);// índice de buffers
 		if (rx_data_UART[1] == 't') { // En este switch solo observo el segundo byte
-			/*Frecuencia=((int)(rx_data_UART[2]-'0'))*100+((int)(rx_data_UART[3]-'0'))*10+(int)(rx_data_UART[4]-'0');
-			 Amplitud=((int)(rx_data_UART[5]-'0'))*100+((int)(rx_data_UART[6]-'0'))*10+(int)(rx_data_UART[7]-'0');
-			 Amplitud=((int)(rx_data_UART[8]-'0'))*100+((int)(rx_data_UART[9]-'0'))*10+(int)(rx_data_UART[10]-'0');
-			 char info[50];
-			 sprintf(info, "Triangular, freq: %d, min: %d, max: %d \n",freq, min, max);
-			 triangle_wave(freq,min,max);
-			 HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);*/
 		} else if (rx_data_UART[1] == 's') {
 			Amplitud = ((int) (rx_data_UART[2] - '0')) * 10000
 					+ ((int) (rx_data_UART[3] - '0')) * 1000
@@ -705,11 +662,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 			Frecuencia = ((int) (rx_data_UART[7] - '0')) * 100
 					+ ((int) (rx_data_UART[8] - '0')) * 10
 					+ ((int) (rx_data_UART[9] - '0'));
-			//max=((int)(rx_data_UART[8]-'0'))*100+((int)(rx_data_UART[9]-'0'))*10+(int)(rx_data_UART[10]-'0');
-			//char info[50];
-			//sprintf(info, "Senoidal,vel:%d ,freq: %d\n",vel, freq);
 			sin_wave(Amplitud, Frecuencia);
-			//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
 		} else if (rx_data_UART[1] == 'c') {
 			Amplitud = ((int) (rx_data_UART[2] - '0')) * 10000
 					+ ((int) (rx_data_UART[3] - '0')) * 1000
@@ -741,13 +694,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 			}
 		}
-		//procesarUart(huart2, rx_data_UART, 0);
-
 	}
-
-	//__HAL_UART_FLUSH_DRREGISTER(&huart2);
-	//HAL_UART_Receive_IT(&huart2, rx_data_UART, 13); // leer 1 byte
-
 }
 
 _Bool FC_der() {

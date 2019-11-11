@@ -108,6 +108,7 @@ int posActual = 0;
 int posMax = 0;
 int posHome = 0;
 int posCentral = 0;
+int volatile maxIndex = 0;
 float velHoming = 100;
 
 volatile int velocidades[1000];
@@ -115,7 +116,7 @@ volatile int velocidadesPulsos[1000];
 volatile int posiciones[1000];
 volatile int posicionesPulsos[1000];
 volatile int posicionesActPulsos[15000];
-volatile int periodos[1000];
+volatile int periodos[5000];
 // variables para comunicacion UART2
 uint8_t rx_index_UART2;
 _Bool OK_UART2;
@@ -161,7 +162,7 @@ int main(void) {
 	MX_I2C2_Init();
 	/* USER CODE BEGIN 2 */
 	HAL_TIM_Base_Start_IT(&htim3);
-	HAL_TIM_Base_Start(&htim3);
+	//HAL_TIM_Base_Start(&htim3);
 	//HAL_TIM_Base_Start_IT(&htim4);
 	//HAL_TIM_PWM_Start(&htim4,TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
@@ -578,7 +579,7 @@ void homing() {
 	}
 	if (estado == 4) {
 		HAL_TIM_PWM_Stop_IT(&htim4, TIM_CHANNEL_1);
-		HAL_TIM_Base_Stop_IT(&htim4);
+		//HAL_TIM_Base_Stop_IT(&htim4);
 		HAL_TIM_Base_Stop_IT(&htim3);
 		if (posActual > posHome) {
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
@@ -643,7 +644,7 @@ void sin_wave(int A, int F) {
 	}
 
 	HAL_TIM_PWM_Start_IT(&htim4, TIM_CHANNEL_1);
-	HAL_TIM_Base_Start_IT(&htim4);
+	//HAL_TIM_Base_Start_IT(&htim4);
 	HAL_TIM_Base_Start_IT(&htim3);
 	//homing();
 	//while(estado==4){

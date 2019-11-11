@@ -108,7 +108,7 @@ int posActual = 0;
 int posMax = 0;
 int posHome = 0;
 int posCentral = 0;
-int volatile maxIndex = 0;
+int maxIndex = 0;
 float velHoming = 100;
 
 volatile int velocidades[1000];
@@ -599,13 +599,14 @@ void sin_wave(int A, int F) {
 	int velocidad = 0;
 	int periodo = 0;
 	int compareMatch = 0;
+	maxIndex=1/1*1000;
 	double deltaT = (htim3_Prescaler * (htim3_Period + 1)) / clock; //porque tiene que cambiar al cuarto
 
 	//float period=0.01;
 	sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n", A, F);
 	//sprintf(info, "sin OK\n");
 	HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < maxIndex; i++) {
 		velocidades[i] = (int) (A * 2 * M_PI * F
 				* sin((2 * M_PI * F * i * deltaT)));
 		//posiciones[i]=(int)(A*sin(2*M_PI*F*i*deltaT));
@@ -613,7 +614,7 @@ void sin_wave(int A, int F) {
 				/ mmporRevolucion);
 
 	}
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < maxIndex; i++) {
 		periodos[i] = (int) (1
 				/ (velocidadesPulsos[i] * htim4_Prescaler / clock));
 		if (abs(periodos[i]) > 65535 && periodos[i - 1] > 0) {

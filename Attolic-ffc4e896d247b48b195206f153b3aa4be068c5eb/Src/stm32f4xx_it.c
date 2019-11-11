@@ -89,7 +89,7 @@ extern int posHome;
 extern int estado;
 extern int posMax;
 int volatile actualVel = 0;
-extern int volatile maxIndex;
+extern int maxIndex;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -272,7 +272,7 @@ void TIM3_IRQHandler(void) {
 	i++;
 	*/
 	if (estado == 5) {
-		if (actualVel > 999) {
+		if (actualVel > (maxIndex-1)) {
 			actualVel = 0;
 		}
 		posicionesActPulsos[actualVel] = posActual;

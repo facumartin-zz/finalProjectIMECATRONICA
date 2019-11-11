@@ -578,11 +578,13 @@ void homing() {
 }
 
 void sin_wave(int A, int F) {
+	HAL_TIM_PWM_Stop_IT(&htim4, TIM_CHANNEL_1);
 	char info[20];
 	int velocidad = 0;
 	int periodo = 0;
 	int compareMatch = 0;
-	maxIndex=1/1*1000;
+	float floatmaxIndex=(1.0/(double)F)*1000.0;
+	maxIndex=round(floatmaxIndex);
 	double deltaT = (htim3_Prescaler * (htim3_Period + 1)) / clock; //porque tiene que cambiar al cuarto
 	sprintf(info, "sin,Amplitud:%d ,Frecuencia: %d\n", A, F);
 	HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
@@ -678,8 +680,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 			HAL_UART_Transmit(&huart2, (uint8_t*) info, strlen(info), 200);
 		} else if (rx_data_UART[1] == 'h') {
-			homing();
 			estado = 0;
+			homing();
 		} else if (rx_data_UART[1] == 'v') {
 			HAL_UART_Transmit(&huart2, "Velocity: ", 10, 200);
 			for (int i = 0; i < 100; i++) {

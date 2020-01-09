@@ -87,7 +87,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_I2C2_Init(void);
 /* USER CODE BEGIN PFP */
 void triangle_wave(int freq, int min, int max);
-void sin_wave(int A, int F);
+void sin_wave(int A, float F);
 void const_vel(int A, int F);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 
@@ -111,12 +111,12 @@ int posCentral = 0;
 int maxIndex = 0;
 float velHoming = 100;
 
-volatile int velocidades[1000];
-volatile int velocidadesPulsos[1000];
-volatile int posiciones[1000];
-volatile int posicionesPulsos[1000];
-volatile int posicionesActPulsos[15000];
-volatile int periodos[5000];
+volatile int velocidades[10000];
+volatile int velocidadesPulsos[10000];
+//volatile int posiciones[1000];
+//volatile int posicionesPulsos[1000];
+//volatile int posicionesActPulsos[15000];
+volatile int periodos[10000];
 // variables para comunicacion UART2
 uint8_t rx_index_UART2;
 _Bool OK_UART2;
@@ -577,12 +577,13 @@ void homing() {
 	}
 }
 
-void sin_wave(int A, int F) {
+void sin_wave(int A, float F) {
 	HAL_TIM_PWM_Stop_IT(&htim4, TIM_CHANNEL_1);
 	char info[20];
 	int velocidad = 0;
 	int periodo = 0;
 	int compareMatch = 0;
+	F=F/10.0;
 	float floatmaxIndex=(1.0/(double)F)*1000.0;
 	maxIndex=round(floatmaxIndex);
 	double deltaT = (htim3_Prescaler * (htim3_Period + 1)) / clock; //porque tiene que cambiar al cuarto

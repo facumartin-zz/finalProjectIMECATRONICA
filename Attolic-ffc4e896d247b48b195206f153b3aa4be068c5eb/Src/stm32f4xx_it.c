@@ -78,10 +78,10 @@ extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
 extern _Bool FC_der();
 extern _Bool FC_izq();
-extern int periodos[5001];
-int periodosreales[1001];
-extern int posicionesPulsos[1001];
-extern int posicionesActPulsos[15000];
+extern int periodos[10000];
+//int periodosreales[1001];
+//extern int posicionesPulsos[1001];
+//extern int posicionesActPulsos[15000];
 char buf[16];
 extern int posActual;
 extern int posCentral;
@@ -267,7 +267,7 @@ void TIM3_IRQHandler(void) {
 		if (actualVel > (maxIndex-1)) {
 			actualVel = 0;
 		}
-		posicionesActPulsos[actualVel] = posActual;
+		//posicionesActPulsos[actualVel] = posActual;
 		if (periodos[actualVel] < 0) {
 			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
 		} else {
@@ -276,8 +276,8 @@ void TIM3_IRQHandler(void) {
 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
 		//sprintf(info, "velAct: %d\n",periodos[actualVel]);
 		//HAL_UART_Transmit(&huart2, (uint8_t*)info, strlen(info), 200);
-		posicionesActPulsos[actualVel] = posActual;
-		periodosreales[actualVel] = TIM4->ARR;
+		//posicionesActPulsos[actualVel] = posActual;
+		//periodosreales[actualVel] = TIM4->ARR;
 		TIM4->CNT = 0;
 		TIM4->CCR1 = (uint) (abs((periodos[actualVel] / 2)));
 		TIM4->ARR = (uint) abs(periodos[actualVel]);
